@@ -1,3 +1,4 @@
+"use client";
 import NavigationMobile from "@/components/custom_components/navigation-mobile";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";

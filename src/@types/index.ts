@@ -1,5 +1,9 @@
-
 export type { ILoginProps } from "./authentication/authentication.form";
 export type { IRegisterProps } from "./authentication/authentication.form";
 export type { ICompanyRequirements } from "./authentication/authentication.form";
 export type { IOption, IOptions } from "./generics/options";
+export type { IRefActions } from "./generics/ref_actions";
+export type { ICompanyServiceSchema } from "./company/services";
+export type { IAlertProps } from "./generics/alert";
+export type { ICompanyPlansSchema } from "./company/services";
+export type { IDatePickerProps } from "./generics/date_picker";

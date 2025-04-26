@@ -5,7 +5,7 @@ import MoonIcon from "./icons/moon-icon";
 import { Button } from "@/components/ui/button";
 
 export const ThemeButton = () => {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   return (
     <div className="w-3xs h-5 flex flex-row justify-center gap-4 items-center bg-none">

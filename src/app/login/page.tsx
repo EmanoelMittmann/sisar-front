@@ -17,7 +17,7 @@ export default function Login() {
   });
 
   return (
-    <div className="w-md h-1/3 bg-white rounded-md flex flex-col items-start justify-start gap-8 p-8">
+    <div className="w-xl max-sm:w-sm sm:w-xl md:w-xl lg:w-xl h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>
         <Input
           placeholder="E-mail"
@@ -43,7 +43,7 @@ export default function Login() {
           Não tem conta ? <a href="/cadastre-se">Cadastre-se aqui</a>
         </h5>
         <Button
-          className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480]"
+          className="w-full bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
           onClick={() => navigate.replace("/inicio")}
         >

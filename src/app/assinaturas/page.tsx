@@ -77,10 +77,10 @@ export default function Assinaturas() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 w-5xl">
-      <div className="flex flex-col items-center max-sm:items-start">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col items-center gap-12">
         <section className="w-4xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-4xl">
-          <h5 className="text-2xl font-semibold text-start">
+          <h5 className="text-2xl font-semibold mb-6 text-start">
             Minhas Assinaturas
           </h5>
           <Table>

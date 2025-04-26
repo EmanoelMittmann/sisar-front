@@ -32,7 +32,7 @@ export default function Register() {
   };
 
   return (
-    <div className="w-md h-1/3 bg-white rounded-md flex flex-col items-start justify-start gap-8 p-8">
+    <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>
         {Object.keys(form.getValues()).map((key, index) => {
           if (key === "is_client" || key === "is_company") {
@@ -54,7 +54,7 @@ export default function Register() {
           );
         })}
         <Button
-          className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480]"
+          className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
           onClick={() => navigate.replace("/inicio")}
         >

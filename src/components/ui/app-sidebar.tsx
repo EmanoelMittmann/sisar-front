@@ -92,7 +92,7 @@ const CustomDropdown = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Minha Empresa</DropdownMenuLabel>
+        <DropdownMenuLabel onClick={() => navigate.push('/minha-empresa')} className="cursor-pointer">Minha Empresa</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup className="flex flex-row h-10 items-center">
           <DropdownMenuLabel>Tema</DropdownMenuLabel>
@@ -110,7 +110,7 @@ const CustomDropdown = () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate.replace("/login")}>
+        <DropdownMenuItem onClick={() => navigate.push("/login")} className="cursor-pointer">
           <LogOut />
           <span>Log-out</span>
         </DropdownMenuItem>
