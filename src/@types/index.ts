@@ -7,3 +7,4 @@ export type { ICompanyServiceSchema } from "./company/services";
 export type { IAlertProps } from "./generics/alert";
 export type { ICompanyPlansSchema } from "./company/services";
 export type { IDatePickerProps } from "./generics/date_picker";
+export type { ISchedulerProps } from "./generics/calendar";

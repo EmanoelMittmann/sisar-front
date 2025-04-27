@@ -9,7 +9,7 @@ export default function AgendarLayout({ children }: { children: ReactNode }) {
     <div>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarTrigger className="hidden max-sm:hidden sm:hidden md:block lg:block" />
+        <SidebarTrigger className="hidden max-sm:hidden sm:hidden md:block lg:flex lg:items-center" />
         <main className="flex flex-col w-full items-center justify-center">
           <NavigationMobile />
           <div className="h-full w-full">{children}</div>

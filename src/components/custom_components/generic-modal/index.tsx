@@ -3,7 +3,6 @@ import { IGenericModalProps, IRefActions } from "@/@types/generics/ref_actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -36,7 +35,13 @@ export const GenericModal = forwardRef<IRefActions, IGenericModalProps>(
           <DialogHeader>{title}</DialogHeader>
           <div>{render}</div>
           <DialogFooter>
-            <DialogClose asChild>Cancelar</DialogClose>
+            <Button
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancelar
+            </Button>
             <Button className="cursor-pointer" onClick={() => handler()}>
               Salvar
             </Button>
