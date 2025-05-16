@@ -141,7 +141,8 @@ export default function AdminInicio() {
           Bem-vindo ao Joel
         </h1>
         <span className="text-lg whitespace-nowrap text-black flex flex-row items-center gap-5">
-          Entradas do Mês: <h6 className="text-green-500">R$ 1000.00</h6>
+          <h6 className="dark:text-white text-black">Entradas do Mês:</h6>
+          <h6 className="text-green-500">R$ 1000.00</h6>
         </span>
       </section>
       <section>

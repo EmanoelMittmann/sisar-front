@@ -17,6 +17,14 @@ import { DatePicker } from "@/components/custom_components/date-picker";
 import { useAlert } from "@/hooks/use-alert";
 import { useGenericModal } from "@/hooks/useGenericModal";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 const DEFAULT_SERVICES = [
   { id: 1, name: "Lavagem Simples", price: "R$ 29,90", createdAt: new Date() },
   { id: 2, name: "Lavagem Premium", price: "R$ 29,90", createdAt: new Date() },
@@ -103,7 +111,7 @@ export default function Company() {
   }
   function DEFAULT_PLANS_FORM(): JSX.Element {
     return (
-      <Form {...service_form} className="grid gap-4 py-4">
+      <Form control={service_form.control} className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label>Nome</Label>
           <Input
@@ -116,9 +124,22 @@ export default function Company() {
           <Label>Preço</Label>
           <Input
             placeholder="Preço do plano"
-            className="col-span-3"
+            className=" col-span-3"
             {...plans_form.register("price")}
           />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label>Recorrência</Label>
+          <Select>
+            <SelectTrigger className="w-[343px] max-sm:w-[245px] sm:w-[343px]">
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="semanal">Semanal</SelectItem>
+              <SelectItem value="mensal">Mensal</SelectItem>
+              <SelectItem value="anual">Anual</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label>Vencimento</Label>
