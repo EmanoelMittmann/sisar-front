@@ -1,4 +1,6 @@
-import API from "../api";
+"use server";
+
+import axios from "axios";
 
 interface ISignInInput {
   email: string;
@@ -7,6 +9,12 @@ interface ISignInInput {
 
 interface ISignInResponse {
   token: string;
+}
+interface ISignUpResponse {
+  message: string;
+}
+interface ISignUpCompanyResponse {
+  message: string;
 }
 
 interface ISignUpInput {
@@ -19,10 +27,6 @@ interface ISignUpInput {
   is_client: boolean;
 }
 
-interface ISignUpResponse {
-  message: string;
-}
-
 interface ISignUpCompanyInput {
   organization_name: string;
   cnpj: string;
@@ -31,45 +35,64 @@ interface ISignUpCompanyInput {
   organization_email: string;
 }
 
-interface ISignUpCompanyResponse {
-  message: string;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export async function signin(input: ISignInInput): Promise<ISignInResponse> {
+  try {
+    const response = await axios.post<ISignInResponse>(
+      `${API_URL}/auth/signin`,
+      input
+    );
+
+    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error);
+    return Promise.reject(error);
+  }
 }
 
-export class AuthController {
-  async signin(input: ISignInInput): Promise<ISignInResponse> {
-    try {
-      const response = await API.post<ISignInResponse>("/auth/signin", input);
+export async function signup(input: ISignUpInput): Promise<ISignUpResponse> {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(input),
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error signing in");
-    }
+    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(error);
+    return Promise.reject(error.response.data);
   }
+}
 
-  async signup(input: ISignUpInput): Promise<ISignUpResponse> {
-    try {
-      const response = await API.post<ISignUpResponse>("/auth/signup", input);
+export async function signupCompany(
+  input: ISignUpCompanyInput
+): Promise<ISignUpCompanyResponse> {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup/company`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(input),
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error signing up");
-    }
-  }
-
-  async signupCompany(
-    input: ISignUpCompanyInput
-  ): Promise<ISignUpCompanyResponse> {
-    try {
-      const response = await API.post<ISignUpCompanyResponse>(
-        "/auth/signup/company",
-        input
-      );
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error signing up company");
-    }
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error signing up company");
   }
 }

@@ -26,6 +26,7 @@ export default function Company() {
       cnpj: "",
       fantasy_name: "",
       telephone: "",
+      organization_email: "",
       type_service: "",
     },
   });
@@ -33,12 +34,13 @@ export default function Company() {
   const mapper: Record<string, string> = {
     cnpj: "CNPJ",
     fantasy_name: "Nome fantasia",
+    organization_email: "E-mail da empresa",
     telephone: "Telefone",
     type_service: "Tipo de serviço",
   };
 
   return (
-    <div className="w-md h-1/3 bg-white rounded-md flex flex-col items-start justify-start gap-8 p-8">
+    <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>
         {Object.keys(form.getValues()).map((key, index) => {
           if (key == "type_service") {

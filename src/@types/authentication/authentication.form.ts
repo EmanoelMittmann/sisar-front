@@ -16,6 +16,7 @@ export interface IRegisterProps {
 export interface ICompanyRequirements {
   cnpj: string;
   fantasy_name: string;
+  organization_email: string;
   telephone: string;
   type_service: string;
 }

@@ -56,7 +56,7 @@ export default function Register() {
         <Button
           className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
-          onClick={() => navigate.replace("/inicio")}
+          onClick={() => navigate.replace("/cadastre-se/empresa")}
         >
           Registre-se
         </Button>

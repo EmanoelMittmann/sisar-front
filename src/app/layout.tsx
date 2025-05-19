@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeWrapper } from "@/theme";
+import { ListenerErrorClientProvider } from "@/context/listeners/listener-error-client";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +19,8 @@ export const metadata: Metadata = {
   title: "sisar",
   description: "A application for managing your schedules and appointments",
   icons: {
-    icon: '/scheduler.svg',
-  }
+    icon: "/scheduler.svg",
+  },
 };
 
 export default function RootLayout({
@@ -31,7 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeWrapper>{children}</ThemeWrapper>
+        <Toaster position="bottom-left" />
+        <ListenerErrorClientProvider>
+          <ThemeWrapper>{children}</ThemeWrapper>
+        </ListenerErrorClientProvider>
       </body>
     </html>
   );

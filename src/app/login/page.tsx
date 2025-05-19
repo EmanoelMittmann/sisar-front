@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { signin } from "@/context/controllers/auth.controller";
+import { toast } from "sonner";
 
 export default function Login() {
   const navigate = useRouter();
@@ -15,6 +17,25 @@ export default function Login() {
       password: "",
     },
   });
+
+  async function handleSubmit(data: ILoginProps) {
+    if (!data.email || !data.password) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+
+    try {
+      const response = await signin(data);
+      if (response.token) {
+        localStorage.setItem("access_token", response.token);
+        toast.success("Login realizado com sucesso");
+        navigate.push("/inicio");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("E-mail ou senha inválidos");
+    }
+  }
 
   return (
     <div className="w-xl max-sm:w-sm sm:w-xl md:w-xl lg:w-xl h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
@@ -45,7 +66,7 @@ export default function Login() {
         <Button
           className="w-full bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
-          onClick={() => navigate.replace("/inicio")}
+          onClick={() => handleSubmit(form.getValues())}
         >
           Entrar
         </Button>

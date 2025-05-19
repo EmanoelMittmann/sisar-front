@@ -1,8 +1,9 @@
-"use server";
-import axios from "axios";
-import { useRouter } from "next/router";
+"use client";
+import axios, { AxiosInstance } from "axios";
+import { useRouter } from "next/navigation";
+//@TODO: investigate why next 15 not support axios instance
 
-const API = axios.create({
+export const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
@@ -12,11 +13,11 @@ const API = axios.create({
 
 API.interceptors.request.use((config) => {
   const bearer_token = localStorage.getItem("access_token");
-  const navigate = useRouter();
+
   if (!bearer_token) {
-    localStorage.clear();
-    navigate.push("/login");
+    return config;
   }
+
   config.headers.Authorization = `Bearer ${bearer_token}`;
   return config;
 });
@@ -35,4 +36,4 @@ API.interceptors.response.use((response) => {
   return response;
 });
 
-export default API;
+export default API as AxiosInstance;
