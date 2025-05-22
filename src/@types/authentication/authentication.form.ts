@@ -6,6 +6,7 @@ export interface ILoginProps {
 export interface IRegisterProps {
   name: string;
   email: string;
+  phone: string;
   is_client: boolean;
   is_company: boolean;
   password: string;

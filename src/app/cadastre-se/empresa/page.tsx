@@ -10,8 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { signupCompany } from "@/context/controllers/auth.controller";
+import { user_context } from "@/context/user_context/user_context";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const DEFAULT_SERVICES: IOptions = [
   { label: "Domésticos", value: "domestic" },
@@ -32,12 +35,32 @@ export default function Company() {
   });
 
   const mapper: Record<string, string> = {
-    cnpj: "CNPJ",
-    fantasy_name: "Nome fantasia",
     organization_email: "E-mail da empresa",
-    telephone: "Telefone",
     type_service: "Tipo de serviço",
+    fantasy_name: "Nome fantasia",
+    telephone: "Telefone",
+    cnpj: "CNPJ",
   };
+
+  async function handleSubmit(userId: string, data: ICompanyRequirements) {
+    try {
+      const response = await signupCompany(userId, {
+        cnpj: data.cnpj,
+        organization_name: data.fantasy_name,
+        organization_email: data.organization_email,
+        phone: data.telephone,
+        type_service: data.type_service,
+      });
+
+      if (response.message) {
+        toast.success("Cadastro realizado com sucesso");
+        navigate.push("/login");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao cadastrar a empresa, tente novamente");
+    }
+  }
 
   return (
     <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
@@ -45,7 +68,13 @@ export default function Company() {
         {Object.keys(form.getValues()).map((key, index) => {
           if (key == "type_service") {
             return (
-              <Select key={index}>
+              <Select
+                key={index}
+                defaultValue={form.watch(key as keyof ICompanyRequirements)}
+                onValueChange={(value) =>
+                  form.setValue(key as keyof ICompanyRequirements, value)
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -74,7 +103,10 @@ export default function Company() {
         <Button
           className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480]"
           variant="default"
-          onClick={() => navigate.replace("/inicio")}
+          onClick={() => {
+            const user = user_context.getUser();
+            handleSubmit(user as string, form.getValues());
+          }}
         >
           Registre-se
         </Button>

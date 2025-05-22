@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signup } from "@/context/controllers/auth.controller";
+import { user_context } from "@/context/user_context/user_context";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function Register() {
   const navigate = useRouter();
@@ -13,6 +16,7 @@ export default function Register() {
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       is_client: false,
       is_company: false,
       password: "",
@@ -26,10 +30,41 @@ export default function Register() {
     email: "E-mail",
     is_client: "Cliente",
     is_company: "Empresa",
+    phone: "Telefone",
     password: "Senha",
     password_confirmation: "Confirmação de senha",
     cpf: "CPF",
   };
+
+  async function handleSubmit(data: IRegisterProps) {
+    try {
+      const response = await signup({
+        confirm_password: data.password_confirmation,
+        email: data.email,
+        is_client: data.is_client,
+        is_company: data.is_company,
+        name: data.name,
+        password: data.password,
+        cpf: data.cpf,
+        phone: data.phone,
+      });
+
+      if (response.userId) {
+        user_context.setUser(response.userId);
+        if (data.is_company) {
+          navigate.push("/cadastre-se/empresa");
+        } else {
+          toast.success("Cadastro realizado com sucesso");
+          navigate.push("/login");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao cadastrar usuário");
+    }
+  }
+
+  console.log(form.watch("is_company"));
 
   return (
     <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
@@ -38,7 +73,13 @@ export default function Register() {
           if (key === "is_client" || key === "is_company") {
             return (
               <div className="flex items-end space-x-2" key={index}>
-                <Checkbox id={key} />
+                <Checkbox
+                  id={key}
+                  checked={Boolean(form.watch(key as keyof IRegisterProps))}
+                  onCheckedChange={(checked) => {
+                    form.setValue(key as keyof IRegisterProps, checked);
+                  }}
+                />
                 <Label htmlFor={key}>{mapper[key]}</Label>
               </div>
             );
@@ -56,7 +97,7 @@ export default function Register() {
         <Button
           className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
-          onClick={() => navigate.replace("/cadastre-se/empresa")}
+          onClick={() => handleSubmit(form.getValues())}
         >
           Registre-se
         </Button>

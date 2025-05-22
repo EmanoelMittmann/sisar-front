@@ -11,7 +11,7 @@ interface ISignInResponse {
   token: string;
 }
 interface ISignUpResponse {
-  message: string;
+  userId: string;
 }
 interface ISignUpCompanyResponse {
   message: string;
@@ -23,6 +23,7 @@ interface ISignUpInput {
   password: string;
   confirm_password: string;
   cpf: string;
+  phone: string;
   is_company: boolean;
   is_client: boolean;
 }
@@ -54,17 +55,7 @@ export async function signin(input: ISignInInput): Promise<ISignInResponse> {
 
 export async function signup(input: ISignUpInput): Promise<ISignUpResponse> {
   try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(input),
-      }
-    );
+    const response = await axios.post(`${API_URL}/auth/signup`, input);
 
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,19 +66,13 @@ export async function signup(input: ISignUpInput): Promise<ISignUpResponse> {
 }
 
 export async function signupCompany(
+  user_id: string,
   input: ISignUpCompanyInput
 ): Promise<ISignUpCompanyResponse> {
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup/company`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(input),
-      }
+      `${API_URL}/auth/signup-company/${user_id}`,
+      input
     );
 
     return response.data;
