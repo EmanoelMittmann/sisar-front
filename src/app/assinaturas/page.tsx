@@ -4,6 +4,7 @@ import PopoverMenu from "@/components/custom_components/popover";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useQuery } from "@/hooks/use-query";
+import { useMemo } from "react";
 
 export default function Assinaturas() {
   // Mock data for recurrent subscriptions
@@ -58,7 +59,19 @@ export default function Assinaturas() {
   //   },
   // ];
 
-  const { data, isLoading } = useQuery("listAllPlans");
+  const { data, isLoading } = useQuery("listPlanByUser");
+
+  const subscriptions = useMemo(() => {
+    if (Array.isArray(data) && !isLoading) {
+      return data.map((item: any) => ({
+        id: item.uuid,
+        name: item.name,
+        price: item.price,
+        status: new Date(item.dueDate) < new Date() ? "Inativo" : "Ativo",
+      }));
+    }
+    return [];
+  }, [data, isLoading]);
 
   const VARIANT_STATUS: Record<"Ativo" | "Inativo", "default" | "destructive"> =
     {
@@ -95,7 +108,13 @@ export default function Assinaturas() {
                 >
                   <TableCell>{item.name}</TableCell>
                   <TableCell>
-                    <Badge variant={VARIANT_STATUS[item.status]}>
+                    <Badge
+                      variant={
+                        VARIANT_STATUS[
+                          item.status as keyof typeof VARIANT_STATUS
+                        ]
+                      }
+                    >
                       {item.status}
                     </Badge>
                   </TableCell>

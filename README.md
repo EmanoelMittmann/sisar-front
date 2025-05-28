@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PWA Frontend
+
+A modern Progressive Web App (PWA) frontend built with Next.js 15, React 19, TypeScript, and Tailwind CSS. This project is designed for scalable, maintainable, and secure web applications, featuring modular architecture and best practices for modern web development.
+
+## Features
+
+- **Next.js 15** with App Router and server/client components
+- **React 19** for UI development
+- **TypeScript** for type safety
+- **Tailwind CSS** for utility-first styling
+- **Radix UI** for accessible UI primitives
+- **Axios** for HTTP requests with token-based authentication
+- **PWA support** (manifest, service worker)
+- **Modular context/controllers** for API, authentication, scheduling, services, plans, and organizations
+- **Form validation** with React Hook Form and Zod
+- **Date/time utilities** with date-fns
+- **Custom hooks and UI components**
+- **Strict security headers** and CORS configuration
+
+## Project Structure
+
+- `src/context/api/` — Axios instance and API config
+- `src/context/controllers/` — Business logic for auth, schedules, services, plans, organizations
+- `src/context/loader_request/` — Centralized request map for dynamic API calls
+- `src/components/` — Custom and UI components (Radix, Tailwind)
+- `src/hooks/` — Custom React hooks
+- `src/lib/` — Utility functions
+- `public/` — Static assets, icons, service worker
+- `manifest.ts` — PWA manifest
+- `next.config.ts` — Next.js and CORS/security config
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- npm 9+
 
+### Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
+Create a `.env` file with:
+```
+NEXT_PUBLIC_API_URL=https://your-api-url
+```
 
-## Learn More
+## Security & CORS
+- Security headers and CORS are configured in `next.config.ts`.
+- API requests use Bearer tokens from `localStorage`.
 
-To learn more about Next.js, take a look at the following resources:
+## PWA
+- Manifest and icons in `public/` and `manifest.ts`.
+- Service worker at `public/sw.js`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
+- `dev` — Start development server
+- `build` — Build for production
+- `start` — Start production server
+- `lint` — Lint codebase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+This project is private. All rights reserved.
