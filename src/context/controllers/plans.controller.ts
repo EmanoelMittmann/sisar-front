@@ -1,4 +1,5 @@
-import API from "../api";
+import axios from "axios";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface ListPlansResponse {
   uuid: string;
@@ -17,56 +18,113 @@ interface ICreatePlanInput {
   dueDate: Date;
 }
 
-export class PlansController {
-  async listAll(organizationId: string): Promise<ListPlansResponse[]> {
-    try {
-      const response = await API.get<ListPlansResponse[]>(
-        `/plans/${organizationId}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error listing plans");
-    }
+export async function listAllPlans(
+  organizationId: string
+): Promise<ListPlansResponse[]> {
+  try {
+    const response = await axios.get<ListPlansResponse[]>(
+      `${API_URL}/plans/${organizationId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error listing plans");
   }
+}
 
-  async createPlan(
-    organizationId: string,
-    input: ICreatePlanInput
-  ): Promise<void> {
-    try {
-      await API.post<void>(`/plans/create/${organizationId}`, input);
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error creating plan");
-    }
+export async function createPlan(
+  organizationId: string,
+  input: ICreatePlanInput
+): Promise<void> {
+  try {
+    await axios.post<void>(`${API_URL}/plans/create/${organizationId}`, input, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error creating plan");
   }
+}
 
-  async updatePlan(id: string, input: ICreatePlanInput): Promise<void> {
-    try {
-      await API.put<void>(`/plans/update/${id}`, input);
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error updating plan");
-    }
+export async function updatePlan(
+  id: string,
+  input: ICreatePlanInput
+): Promise<void> {
+  try {
+    await axios.put<void>(`${API_URL}/plans/update/${id}`, input, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error updating plan");
   }
+}
 
-  async deletePlan(id: string): Promise<void> {
-    try {
-      await API.delete<void>(`/plans/${id}`);
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error deleting plan");
-    }
+export async function deletePlan(id: string): Promise<void> {
+  try {
+    await axios.delete<void>(`${API_URL}/plans/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error deleting plan");
   }
+}
 
-  async getById(id: string): Promise<ListPlansResponse> {
-    try {
-      const response = await API.patch<ListPlansResponse>(`/plans/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error getting plan by ID");
-    }
+export async function getPlanById(id: string): Promise<ListPlansResponse> {
+  try {
+    const response = await axios.patch<ListPlansResponse>(
+      `${API_URL}/plans/${id}`,
+      undefined,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting plan by ID");
+  }
+}
+
+export async function listPlanByUser(): Promise<ListPlansResponse> {
+  try {
+    const response = await axios.get<ListPlansResponse>(
+      `${API_URL}/plans/user`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting list plan by user");
   }
 }

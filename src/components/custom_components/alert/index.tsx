@@ -12,7 +12,7 @@ import {
 import { forwardRef, useImperativeHandle, useState } from "react";
 
 export const Alert = forwardRef<IRefActions, IAlertProps>(
-  ({ description, title, handler }, ref) => {
+  ({ description, title, handler, id }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     function handleClose() {
       setIsOpen(false);
@@ -36,7 +36,7 @@ export const Alert = forwardRef<IRefActions, IAlertProps>(
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handler()}>
+            <AlertDialogAction onClick={() => handler(id)}>
               Salvar
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,4 +1,5 @@
-import API from "../api";
+"use client";
+import axios from "axios";
 
 interface ListEstabelishmentResponse {
   uuid: string;
@@ -6,17 +7,27 @@ interface ListEstabelishmentResponse {
   image_path: string;
 }
 
-export class OrganizationController {
-  async listEstablishment(): Promise<ListEstabelishmentResponse[]> {
-    try {
-      const response = await API.get<ListEstabelishmentResponse[]>(
-        "/organization/list-establishment"
-      );
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject("Error listing establishments");
-    }
+export async function listEstablishment(): Promise<
+  ListEstabelishmentResponse[]
+> {
+  try {
+    const response = await axios.get<ListEstabelishmentResponse[]>(
+      `${API_URL}/organization/list-establishment`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error listing establishments");
   }
 }

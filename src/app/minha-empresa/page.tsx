@@ -26,11 +26,21 @@ import {
 } from "@/components/ui/select";
 
 const DEFAULT_SERVICES = [
-  { id: 1, name: "Lavagem Simples", price: "R$ 29,90", createdAt: new Date() },
-  { id: 2, name: "Lavagem Premium", price: "R$ 29,90", createdAt: new Date() },
-  { id: 3, name: "Aspiragem", price: "R$ 29,90", createdAt: new Date() },
   {
-    id: 4,
+    id: "1",
+    name: "Lavagem Simples",
+    price: "R$ 29,90",
+    createdAt: new Date(),
+  },
+  {
+    id: "2",
+    name: "Lavagem Premium",
+    price: "R$ 29,90",
+    createdAt: new Date(),
+  },
+  { id: "3", name: "Aspiragem", price: "R$ 29,90", createdAt: new Date() },
+  {
+    id: "4",
     name: "Polimento de farois",
     price: "R$ 29,90",
     createdAt: new Date(),
@@ -191,7 +201,11 @@ export default function Company() {
                   </h5>
                   <Button
                     className="cursor-pointer"
-                    onClick={() => serviceRef.current?.handleOpen()}
+                    onClick={() =>
+                      document.startViewTransition(() =>
+                        serviceRef.current?.handleOpen()
+                      )
+                    }
                   >
                     Adicionar
                   </Button>
@@ -207,6 +221,7 @@ export default function Company() {
                           {constructAlert(
                             alert1Ref,
                             "Excluir Serviço",
+                            item.id,
                             "Deseja realmente excluir esse serviço? essa ação não pode ser revertida",
                             (id) => alert(`Excluido ${id}`)
                           )}
@@ -239,13 +254,17 @@ export default function Company() {
                                         .getHours()
                                         .toString(),
                                     });
-                                    serviceRef.current?.handleOpen();
+                                    document.startViewTransition(() =>
+                                      serviceRef.current?.handleOpen()
+                                    );
                                   },
                                 },
                                 {
                                   label: "Excluir",
                                   onClick: () =>
-                                    alert1Ref.current?.handleOpen(),
+                                    document.startViewTransition(() =>
+                                      alert1Ref.current?.handleOpen()
+                                    ),
                                 },
                               ]}
                             />
@@ -265,7 +284,11 @@ export default function Company() {
                   </h5>
                   <Button
                     className="cursor-pointer"
-                    onClick={() => plansRef.current?.handleOpen()}
+                    onClick={() =>
+                      document.startViewTransition(() =>
+                        plansRef.current?.handleOpen()
+                      )
+                    }
                   >
                     Adicionar
                   </Button>
@@ -281,6 +304,7 @@ export default function Company() {
                           {constructAlert(
                             alert2Ref,
                             "Excluir Plano",
+                            item.id,
                             "Deseja realmente excluir esse plano? essa ação não pode ser revertida",
                             (id) => alert(`Excluido ${id}`)
                           )}
@@ -312,13 +336,18 @@ export default function Company() {
                                       dueDate: new Date(),
                                       description: "Plano de alguma coisa",
                                     });
-                                    plansRef.current?.handleOpen();
+                                    document.startViewTransition(() => {
+                                      plansRef.current?.handleOpen();
+                                    });
                                   },
                                 },
                                 {
                                   label: "Excluir",
                                   onClick: () =>
-                                    alert2Ref.current?.handleOpen(),
+                                    document.startViewTransition({
+                                      update: () => alert2Ref.current?.handleOpen(),
+                                      types: ['slide', 'right']
+                                    }),
                                 },
                               ]}
                             />

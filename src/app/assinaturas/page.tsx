@@ -3,59 +3,62 @@ import { PopoverMenu as PopoverType } from "@/@types/generics/options";
 import PopoverMenu from "@/components/custom_components/popover";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { useQuery } from "@/hooks/use-query";
 
 export default function Assinaturas() {
   // Mock data for recurrent subscriptions
-  const subscriptions: {
-    id: number;
-    name: string;
-    price: string;
-    renewalDate: string;
-    status: keyof typeof VARIANT_STATUS;
-  }[] = [
-    {
-      id: 1,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Ativo",
-    },
-    {
-      id: 2,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Ativo",
-    },
-    {
-      id: 3,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Inativo",
-    },
-    {
-      id: 4,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Ativo",
-    },
-    {
-      id: 5,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Ativo",
-    },
-    {
-      id: 6,
-      name: "Plano Básico",
-      price: "R$ 29,90",
-      renewalDate: "2025-05-01",
-      status: "Inativo",
-    },
-  ];
+  // const subscriptions: {
+  //   id: number;
+  //   name: string;
+  //   price: string;
+  //   renewalDate: string;
+  //   status: keyof typeof VARIANT_STATUS;
+  // }[] = [
+  //   {
+  //     id: 1,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Ativo",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Ativo",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Inativo",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Ativo",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Ativo",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Plano Básico",
+  //     price: "R$ 29,90",
+  //     renewalDate: "2025-05-01",
+  //     status: "Inativo",
+  //   },
+  // ];
+
+  const { data, isLoading } = useQuery("listAllPlans");
 
   const VARIANT_STATUS: Record<"Ativo" | "Inativo", "default" | "destructive"> =
     {

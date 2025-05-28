@@ -1,79 +1,95 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { useQuery } from "@/hooks/use-query";
 import Link from "next/link";
-import { use } from "react";
-const company_services = [
-  {
-    id: 1,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 2,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 3,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 4,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 5,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 6,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 7,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 8,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 9,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 10,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-  {
-    id: 11,
-    name: "Corte de cabelo",
-    price: "R$ 29,90",
-    duration: "30 min",
-  },
-];
+import { use, useMemo } from "react";
+// const company_services = [
+//   {
+//     id: 1,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 2,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 3,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 4,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 5,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 6,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 7,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 8,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 9,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 10,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+//   {
+//     id: 11,
+//     name: "Corte de cabelo",
+//     price: "R$ 29,90",
+//     duration: "30 min",
+//   },
+// ];
 
 export default function Agendar(_: { params: Promise<{ slug: string }> }) {
   const { slug } = use(_.params);
+
+  const { data, isLoading } = useQuery("findAllSchedules", [slug]);
+
+  const company_services = useMemo(() => {
+    if (Array.isArray(data) && !isLoading) {
+      return data.map((item: any) => ({
+        id: item.uuid,
+        name: item.service.name,
+        duration: item.service.duration,
+        price: `R$ ${item.service.price.toFixed(2).replace(".", ",")}`,
+      }));
+    }
+    return [];
+  }, [data, isLoading]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-12 flex flex-col items-center">
@@ -82,7 +98,14 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
           <div className="w-2xl max-sm:w-sm sm:w-xl md:w-3xl h-auto border border-gray-300 rounded p-4 ">
             <h4 className="font-bold">Populares</h4>
             <Table>
-              <TableBody> 
+              <TableBody>
+                {company_services.length === 0 && (
+                  <TableRow className="flex justify-center items-center">
+                    <TableCell colSpan={4} className="text-center">
+                      Nenhum serviço encontrado
+                    </TableCell>
+                  </TableRow>
+                )}
                 {company_services.map((iterator) => (
                   <TableRow
                     key={iterator.id}

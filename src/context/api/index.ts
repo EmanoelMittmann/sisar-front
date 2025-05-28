@@ -37,3 +37,5 @@ API.interceptors.response.use((response) => {
 });
 
 export default API as AxiosInstance;
+
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;

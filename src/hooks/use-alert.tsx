@@ -6,10 +6,11 @@ export function useAlert() {
   function constructAlert(
     ref: Ref<IRefActions>,
     title: string,
+    id: string,
     description: string,
     handler: (id: string) => void
   ): JSX.Element {
-    return <Alert ref={ref} {...{ title, description, handler }} />;
+    return <Alert ref={ref} {...{ title, description, handler, id }} />;
   }
 
   return { constructAlert };
