@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +12,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { Home, LogOut, Settings, User, CalendarRange, CreditCard} from "lucide-react";
+import {
+  Home,
+  LogOut,
+  Settings,
+  User,
+  CalendarRange,
+  CreditCard,
+} from "lucide-react";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -78,6 +85,7 @@ export function AppSidebar() {
 
 const CustomDropdown = () => {
   const navigate = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -92,8 +100,15 @@ const CustomDropdown = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel onClick={() => navigate.push('/minha-empresa')} className="cursor-pointer">Minha Empresa</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <>
+          <DropdownMenuLabel
+            onClick={() => navigate?.push("/minha-empresa")}
+            className="cursor-pointer"
+          >
+            Minha Empresa
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+        </>
         <DropdownMenuGroup className="flex flex-row h-10 items-center">
           <DropdownMenuLabel>Tema</DropdownMenuLabel>
           <ThemeButton />
@@ -110,7 +125,10 @@ const CustomDropdown = () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate.push("/login")} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => navigate?.push("/login")}
+          className="cursor-pointer"
+        >
           <LogOut />
           <span>Log-out</span>
         </DropdownMenuItem>

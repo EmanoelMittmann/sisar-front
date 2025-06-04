@@ -7,14 +7,18 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { forwardRef, useImperativeHandle, useState } from "react";
+import { useFormContext } from "react-hook-form";
 
 export const GenericModal = forwardRef<IRefActions, IGenericModalProps>(
   ({ title, render, handler }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    //TODO add arg param for reset form
+    const ctx = useFormContext()
+
     function handleClose() {
+      ctx.reset();
       setIsOpen(false);
     }
 
@@ -31,6 +35,7 @@ export const GenericModal = forwardRef<IRefActions, IGenericModalProps>(
 
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTitle></DialogTitle>
         <DialogContent>
           <DialogHeader>{title}</DialogHeader>
           <div>{render}</div>

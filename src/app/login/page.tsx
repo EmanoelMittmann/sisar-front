@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { signin } from "@/context/controllers/auth.controller";
 import { toast } from "sonner";
-import { user_context } from "@/context/user_context/user_context";
+import { createSession } from "@/context/session/create-session";
 
 export default function Login() {
   const navigate = useRouter();
@@ -28,8 +28,8 @@ export default function Login() {
     try {
       const response = await signin(data);
       if (response.token) {
+        createSession(response.token);
         localStorage.setItem("access_token", response.token);
-        user_context.setToken(response.token);
         document.startViewTransition(() => {
           toast.success("Login realizado com sucesso");
           navigate.push("/inicio");

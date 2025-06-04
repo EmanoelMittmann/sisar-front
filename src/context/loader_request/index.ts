@@ -5,7 +5,10 @@ import {
   deleteSchedule,
   updateSchedule,
 } from "../controllers/schedule.controller";
-import { listEstablishment } from "@/context/controllers/organization.controller";
+import {
+  getEstablishmentByUuid,
+  listEstablishment,
+} from "@/context/controllers/organization.controller";
 import {
   createService,
   deleteService,
@@ -42,6 +45,7 @@ REQUESTS.set("getPlanById", getPlanById);
 REQUESTS.set("listAllPlans", listAllPlans);
 REQUESTS.set("updatePlan", updatePlan);
 REQUESTS.set("listPlanByUser", listPlanByUser);
+REQUESTS.set("getEstablishmentByUuid", getEstablishmentByUuid);
 
 export { REQUESTS };
 
@@ -62,4 +66,5 @@ export type RequestKeys =
   | "getPlanById"
   | "listAllPlans"
   | "updatePlan"
-  | "listPlanByUser";
+  | "listPlanByUser"
+  | "getEstablishmentByUuid";

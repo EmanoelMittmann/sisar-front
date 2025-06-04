@@ -1,3 +1,4 @@
+"use client";
 import { IDatePickerProps } from "@/@types";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,11 +31,7 @@ export const DatePicker = ({ date, setDate }: IDatePickerProps) => {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={(selectedDate) => {
-            if (selectedDate) {
-              setDate(selectedDate);
-            }
-          }}
+          onSelect={(e) => setDate(e as Date)}
           initialFocus
         />
       </PopoverContent>

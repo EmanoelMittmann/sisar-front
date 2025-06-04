@@ -2,13 +2,14 @@
 import axios from "axios";
 import { API_URL } from "../api";
 
-interface ListServiceResponse {
+export interface ListServiceResponse {
   id: string;
   name: string;
   duration: string;
   price: number;
   is_quantitative: boolean;
   limit_for_day: number;
+  created_at: string;
 }
 
 interface UpdateServiceInput {
@@ -25,6 +26,7 @@ export async function listAllServices(
   try {
     const response = await axios.patch<ListServiceResponse[]>(
       `${API_URL}/services/${organizationId}`,
+      {},
       {
         headers: {
           "Content-Type": "application/json",

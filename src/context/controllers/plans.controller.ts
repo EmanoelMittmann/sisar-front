@@ -1,7 +1,7 @@
 import axios from "axios";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface ListPlansResponse {
+export interface ListPlansResponse {
   uuid: string;
   name: string;
   price: number;

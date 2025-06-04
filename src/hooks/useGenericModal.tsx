@@ -6,16 +6,10 @@ export function useGenericModal() {
   function constructModal(
     ref: Ref<IRefActions>,
     title: string,
-    render: React.ReactNode
+    render: React.ReactNode,
+    handler: () => void
   ): JSX.Element {
-    return (
-      <GenericModal
-        ref={ref}
-        title={title}
-        render={render}
-        handler={() => {}}
-      />
-    );
+    return <GenericModal {...{ ref, title, render, handler }} />;
   }
 
   return { constructModal };

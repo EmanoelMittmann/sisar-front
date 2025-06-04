@@ -3,63 +3,46 @@
 import { IRefActions } from "@/@types/generics/ref_actions";
 import PopoverMenu from "@/components/custom_components/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import ClockIcon from "@/theme/icons/clock-icon";
-import React, { JSX } from "react";
-import { Form, useForm } from "react-hook-form";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { ICompanyPlansSchema, ICompanyServiceSchema } from "@/@types";
-import { Textarea } from "@/components/ui/textarea";
-import { DatePicker } from "@/components/custom_components/date-picker";
 import { useAlert } from "@/hooks/use-alert";
 import { useGenericModal } from "@/hooks/useGenericModal";
-
+import { DEFAULT_PLANS_FORM } from "@/components/forms/plans";
+import { DEFAULT_SERVICE_FORM } from "@/components/forms/services";
+import { useQuery } from "@/hooks/use-query";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const DEFAULT_SERVICES = [
-  {
-    id: "1",
-    name: "Lavagem Simples",
-    price: "R$ 29,90",
-    createdAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Lavagem Premium",
-    price: "R$ 29,90",
-    createdAt: new Date(),
-  },
-  { id: "3", name: "Aspiragem", price: "R$ 29,90", createdAt: new Date() },
-  {
-    id: "4",
-    name: "Polimento de farois",
-    price: "R$ 29,90",
-    createdAt: new Date(),
-  },
-];
+  listAllPlans,
+  ListPlansResponse,
+} from "@/context/controllers/plans.controller";
+import {
+  listAllServices,
+  ListServiceResponse,
+} from "@/context/controllers/services.controller";
+import { useMutate } from "@/hooks/use-mutate";
 
 export default function Company() {
   const serviceRef = React.useRef<IRefActions>(null);
+  const serviceEditRef = React.useRef<IRefActions>(null);
   const plansRef = React.useRef<IRefActions>(null);
+  const plansEditRef = React.useRef<IRefActions>(null);
   const alert1Ref = React.useRef<IRefActions>(null);
   const alert2Ref = React.useRef<IRefActions>(null);
 
   const { constructAlert } = useAlert();
   const { constructModal } = useGenericModal();
 
+  const [plans, setPlans] = useState<ListPlansResponse[]>([]);
+  const [services, setServices] = useState<ListServiceResponse[]>([]);
+
   const service_form = useForm<ICompanyServiceSchema>({
     defaultValues: {
       name: "",
-      price: "",
+      price: 0,
       estimate: "",
       is_quantitative: false,
     },
@@ -71,125 +54,110 @@ export default function Company() {
       price: "",
       dueDate: undefined,
       description: "",
+      recurrent: "",
     },
   });
 
-  function DEFAULT_SERVICE_FORM(): JSX.Element {
-    return (
-      <Form {...service_form} className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Nome</Label>
-          <Input
-            placeholder="Nome do serviço"
-            className="col-span-3"
-            {...service_form.register("name")}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Preço</Label>
-          <Input
-            placeholder="Preço do serviço"
-            className="col-span-3"
-            {...service_form.register("price")}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Estimativa</Label>
-          <Input
-            placeholder="30min - 45min"
-            className="col-span-3"
-            {...service_form.register("estimate")}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <div className="flex flex-row gap-2 items-center">
-            <Checkbox
-              checked={service_form.watch("is_quantitative")}
-              onCheckedChange={(e) =>
-                service_form.setValue("is_quantitative", e as boolean)
-              }
-            />
-            <div className="grid leading-none">
-              <label htmlFor="terms1" className="whitespace-nowrap ">
-                Serviço Quantitativo
-              </label>
-            </div>
-          </div>
-        </div>
-      </Form>
-    );
+  const { data: obj } = useQuery("getEstablishmentByUuid");
+  const { mutateAsync: createPlan } = useMutate("createPlan");
+  const { mutateAsync: createService } = useMutate("createService");
+  const { mutateAsync: updatePlan } = useMutate("updatePlan");
+  const { mutateAsync: updateService } = useMutate("updateService");
+
+  const getPlans = useCallback(async () => {
+    if (obj.organization_id !== null) {
+      const request = await listAllPlans(obj.organization_id);
+      setPlans(request);
+    }
+  }, [obj]);
+
+  const getServices = useCallback(async () => {
+    if (obj.organization_id !== null) {
+      const request = await listAllServices(obj.organization_id);
+      setServices(request);
+    }
+  }, [obj]);
+
+  async function handleCreatePlan(data: ICompanyPlansSchema) {
+    try {
+      await createPlan(obj.organization_id, data);
+      plansRef.current?.handleClose();
+    } catch (error) {
+      console.error("Error creating plan:", error);
+    }
   }
-  function DEFAULT_PLANS_FORM(): JSX.Element {
-    return (
-      <Form control={service_form.control} className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Nome</Label>
-          <Input
-            placeholder="Nome do plano"
-            className="col-span-3"
-            {...plans_form.register("name")}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Preço</Label>
-          <Input
-            placeholder="Preço do plano"
-            className=" col-span-3"
-            {...plans_form.register("price")}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Recorrência</Label>
-          <Select>
-            <SelectTrigger className="w-[343px] max-sm:w-[245px] sm:w-[343px]">
-              <SelectValue placeholder="Selecione" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="semanal">Semanal</SelectItem>
-              <SelectItem value="mensal">Mensal</SelectItem>
-              <SelectItem value="anual">Anual</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label>Vencimento</Label>
-          <DatePicker
-            date={plans_form.watch("dueDate") ?? undefined}
-            setDate={(e) => plans_form.setValue("dueDate", e)}
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Textarea
-            placeholder="Escreva sua descriçao aqui"
-            className="col-span-4"
-            {...plans_form.register("description")}
-          />
-        </div>
-      </Form>
-    );
+
+  function formatCNPJ(value: string | undefined): string {
+    if (!value) return "";
+
+    // Remove any non-digit characters
+    const cleanValue = value.replace(/\D/g, "");
+
+    // Apply CNPJ mask (xx.xxx.xxx/xxxx-xx)
+    return cleanValue
+      .replace(/^(\d{2})(\d)/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
+      .slice(0, 18); // Ensure it doesn't exceed CNPJ length
   }
+
+  useEffect(() => {
+    getPlans();
+    getServices();
+  }, [getPlans, getServices]);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {constructModal(serviceRef, "Adicionar Serviço", DEFAULT_SERVICE_FORM())}
-      {constructModal(plansRef, "Adicionar Plano", DEFAULT_PLANS_FORM())}
+      {constructModal(
+        serviceRef,
+        "Adicionar Serviço",
+        DEFAULT_SERVICE_FORM(service_form),
+        () => {
+          createService({
+            ...service_form.getValues(),
+            duration: service_form.getValues().estimate,
+          });
+        }
+      )}
+      {constructModal(
+        plansRef,
+        "Adicionar Plano",
+        DEFAULT_PLANS_FORM(plans_form),
+        () => handleCreatePlan(plans_form.getValues())
+      )}
+      {constructModal(
+        serviceEditRef,
+        "Editar Serviço",
+        DEFAULT_SERVICE_FORM(service_form),
+        () =>
+          updateService({
+            ...service_form.getValues(),
+            duration: service_form.getValues().estimate,
+          })
+      )}
+      {constructModal(
+        plansEditRef,
+        "Editar Plano",
+        DEFAULT_PLANS_FORM(plans_form),
+        () => updatePlan(plans_form.getValues())
+      )}
       <section className="w-7xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-7xl">
         <h3 className="font-bold text-xl p-5">Minha Empresa</h3>
         <div className="mb-12 pl-4 flex flex-row max-sm:flex-col sm:flex-col md:flex-col lg:flex-row gap-4 w-full">
           <div className="w-7xl max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
             <Avatar className="w-24 h-24 rounded cursor-pointer">
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage
+                src={obj?.image_path || "https://github.com/shadcn.png"}
+              />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start justify-start gap-5 mt-4">
-              <Input value="Emanoel Leffa Ltda." disabled />
-              <Input value="000.000.000/0000-01" disabled />
-              <Input
-                value="Lavagem e higienização de veiculos automotores"
-                disabled
-              />
-              <Input value="(51) 99723-5418" disabled />
-              <Input value="sisar@administrator.com" disabled />
+              <Input value={obj?.social_name || ""} disabled />
+              <Input value={formatCNPJ(obj?.cnpj) || ""} disabled />
+              <Input value={obj?.office || ""} disabled />
+              <Input value={obj?.phone || ""} disabled />
+              <Input value={obj?.email || ""} disabled />
             </div>
           </div>
           <div className="flex flex-col items-start justify-start gap-5 w-1/2">
@@ -202,9 +170,17 @@ export default function Company() {
                   <Button
                     className="cursor-pointer"
                     onClick={() =>
-                      document.startViewTransition(() =>
-                        serviceRef.current?.handleOpen()
-                      )
+                      document.startViewTransition(() => {
+                        service_form.resetField("name", { defaultValue: "" });
+                        service_form.resetField("estimate", {
+                          defaultValue: "",
+                        });
+                        service_form.resetField("is_quantitative", {
+                          defaultValue: false,
+                        });
+                        service_form.resetField("price", { defaultValue: 0 });
+                        serviceRef.current?.handleOpen();
+                      })
                     }
                   >
                     Adicionar
@@ -213,64 +189,70 @@ export default function Company() {
                 <div className="h-48 w-full overflow-y-scroll">
                   <Table>
                     <TableBody>
-                      {DEFAULT_SERVICES.map((item) => (
-                        <TableRow
-                          key={item.id}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
-                        >
-                          {constructAlert(
-                            alert1Ref,
-                            "Excluir Serviço",
-                            item.id,
-                            "Deseja realmente excluir esse serviço? essa ação não pode ser revertida",
-                            (id) => alert(`Excluido ${id}`)
-                          )}
-                          <TableCell>
-                            <div className="flex flex-col items-start">
-                              <span className="text-sm text-black dark:text-white font-bold">
-                                {item.name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {item.price}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center justify-center gap-x-2">
-                              {item.createdAt.toLocaleDateString("pt-BR")}
-                              <ClockIcon className="dark:fill-white" />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <PopoverMenu
-                              options={[
-                                {
-                                  label: "Editar",
-                                  onClick: () => {
-                                    service_form.reset({
-                                      price: item.price,
-                                      name: item.name,
-                                      estimate: item.createdAt
-                                        .getHours()
-                                        .toString(),
-                                    });
-                                    document.startViewTransition(() =>
-                                      serviceRef.current?.handleOpen()
-                                    );
-                                  },
-                                },
-                                {
-                                  label: "Excluir",
-                                  onClick: () =>
-                                    document.startViewTransition(() =>
-                                      alert1Ref.current?.handleOpen()
-                                    ),
-                                },
-                              ]}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {Array.isArray(services) && services.length > 0 ? (
+                        services.map(
+                          (item: ListServiceResponse, index: number) => (
+                            <TableRow
+                              key={index}
+                              className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
+                            >
+                              {constructAlert(
+                                alert1Ref,
+                                "Excluir Serviço",
+                                item.id,
+                                "Deseja realmente excluir esse serviço? essa ação não pode ser revertida",
+                                () => alert(`Excluido ${item.id}`)
+                              )}
+                              <TableCell>
+                                <div className="flex flex-col items-start">
+                                  <span className="text-sm text-black dark:text-white font-bold">
+                                    {item.name}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    R$ {item.price.toFixed(2)}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center justify-center gap-x-2">
+                                  {new Date(item.created_at).toLocaleDateString(
+                                    "pt-BR"
+                                  )}
+                                  <ClockIcon className="dark:fill-white" />
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <PopoverMenu
+                                  options={[
+                                    {
+                                      label: "Editar",
+                                      onClick: () => {
+                                        service_form.reset({
+                                          price: item.price,
+                                          name: item.name,
+                                          estimate: item.duration.toString(),
+                                        });
+                                        document.startViewTransition(() =>
+                                          serviceEditRef.current?.handleOpen()
+                                        );
+                                      },
+                                    },
+                                    {
+                                      label: "Excluir",
+                                      onClick: () =>
+                                        document.startViewTransition(() =>
+                                          alert1Ref.current?.handleOpen()
+                                        ),
+                                    },
+                                  ]}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )
+                      ) : (
+                        <>Nada Encontrado</>
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -285,9 +267,17 @@ export default function Company() {
                   <Button
                     className="cursor-pointer"
                     onClick={() =>
-                      document.startViewTransition(() =>
-                        plansRef.current?.handleOpen()
-                      )
+                      document.startViewTransition(() => {
+                        plans_form.resetField("name", { defaultValue: "" });
+                        plans_form.resetField("price", { defaultValue: "" });
+                        plans_form.resetField("dueDate", {
+                          defaultValue: undefined,
+                        });
+                        plans_form.resetField("description", {
+                          defaultValue: "",
+                        });
+                        plansRef.current?.handleOpen();
+                      })
                     }
                   >
                     Adicionar
@@ -296,64 +286,69 @@ export default function Company() {
                 <div className="h-48 w-full overflow-y-scroll">
                   <Table>
                     <TableBody>
-                      {DEFAULT_SERVICES.map((item) => (
-                        <TableRow
-                          key={item.id}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
-                        >
-                          {constructAlert(
-                            alert2Ref,
-                            "Excluir Plano",
-                            item.id,
-                            "Deseja realmente excluir esse plano? essa ação não pode ser revertida",
-                            (id) => alert(`Excluido ${id}`)
-                          )}
-                          <TableCell>
-                            <div className="flex flex-col items-start">
-                              <span className="text-sm text-black dark:text-white font-bold">
-                                {item.name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {item.price}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center justify-center gap-x-2">
-                              {item.createdAt.toLocaleDateString("pt-BR")}
-                              <ClockIcon className="dark:fill-white" />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <PopoverMenu
-                              options={[
-                                {
-                                  label: "Editar",
-                                  onClick: () => {
-                                    plans_form.reset({
-                                      price: item.price,
-                                      name: item.name,
-                                      dueDate: new Date(),
-                                      description: "Plano de alguma coisa",
-                                    });
-                                    document.startViewTransition(() => {
-                                      plansRef.current?.handleOpen();
-                                    });
+                      {Array.isArray(services) && services.length > 0 ? (
+                        plans.map((item: ListPlansResponse, index: number) => (
+                          <TableRow
+                            key={index}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
+                          >
+                            {constructAlert(
+                              alert2Ref,
+                              "Excluir Plano",
+                              item.uuid,
+                              "Deseja realmente excluir esse plano? essa ação não pode ser revertida",
+                              () => alert(`Excluido ${item.uuid}`)
+                            )}
+                            <TableCell>
+                              <div className="flex flex-col items-start">
+                                <span className="text-sm text-black dark:text-white font-bold">
+                                  {item.name}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  R$ {item.price.toFixed(2)}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center justify-center gap-x-2">
+                                {new Date(item.dueDate).toLocaleDateString(
+                                  "pt-BR"
+                                )}
+                                <ClockIcon className="dark:fill-white" />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <PopoverMenu
+                                options={[
+                                  {
+                                    label: "Editar",
+                                    onClick: () => {
+                                      plans_form.reset({
+                                        price: item.price.toString(),
+                                        name: item.name,
+                                        dueDate: new Date(),
+                                        description: "Plano de alguma coisa",
+                                      });
+                                      document.startViewTransition(() => {
+                                        plansEditRef.current?.handleOpen();
+                                      });
+                                    },
                                   },
-                                },
-                                {
-                                  label: "Excluir",
-                                  onClick: () =>
-                                    document.startViewTransition({
-                                      update: () => alert2Ref.current?.handleOpen(),
-                                      types: ['slide', 'right']
-                                    }),
-                                },
-                              ]}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                                  {
+                                    label: "Excluir",
+                                    onClick: () =>
+                                      document.startViewTransition(() =>
+                                        alert2Ref.current?.handleOpen()
+                                      ),
+                                  },
+                                ]}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <>Nada Encontrado</>
+                      )}
                     </TableBody>
                   </Table>
                 </div>

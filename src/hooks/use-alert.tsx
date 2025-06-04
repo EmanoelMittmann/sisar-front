@@ -8,7 +8,7 @@ export function useAlert() {
     title: string,
     id: string,
     description: string,
-    handler: (id: string) => void
+    handler: () => void
   ): JSX.Element {
     return <Alert ref={ref} {...{ title, description, handler, id }} />;
   }

@@ -14,6 +14,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 export const Alert = forwardRef<IRefActions, IAlertProps>(
   ({ description, title, handler, id }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
+
     function handleClose() {
       setIsOpen(false);
     }
