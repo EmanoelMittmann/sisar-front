@@ -4,7 +4,6 @@ import axios from "axios";
 interface ICreateScheduleInput {
   contract_date: Date;
   service_id: string;
-  user_id: string;
   remember_user: boolean;
 }
 

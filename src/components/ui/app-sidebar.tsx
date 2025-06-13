@@ -15,8 +15,6 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import {
   Home,
   LogOut,
-  Settings,
-  User,
   CalendarRange,
   CreditCard,
 } from "lucide-react";
@@ -31,6 +29,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { ThemeButton } from "@/theme/theme-button";
 import { useRouter } from "next/navigation";
+import { useAuthCtx } from "@/context/dal/auth-dal";
+import { use } from "react";
 
 const LIST_MENU = [
   { title: "Início", icon: <Home />, path: "/inicio" },
@@ -85,6 +85,8 @@ export function AppSidebar() {
 
 const CustomDropdown = () => {
   const navigate = useRouter();
+  const ctx = useAuthCtx();
+  const user = use(ctx);
 
   return (
     <DropdownMenu>
@@ -100,29 +102,27 @@ const CustomDropdown = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <>
-          <DropdownMenuLabel
-            onClick={() => navigate?.push("/minha-empresa")}
-            className="cursor-pointer"
-          >
-            Minha Empresa
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-        </>
+        {user?.role === "ADMIN" && (
+          <>
+            <DropdownMenuLabel
+              onClick={() => navigate?.push("/minha-empresa")}
+              className="cursor-pointer"
+            >
+              Minha Empresa
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <DropdownMenuGroup className="flex flex-row h-10 items-center">
           <DropdownMenuLabel>Tema</DropdownMenuLabel>
           <ThemeButton />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User />
-            <span>Usuário</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <Settings />
             <span>Configurações</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem

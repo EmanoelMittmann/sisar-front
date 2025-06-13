@@ -7,7 +7,7 @@ function base64UrlDecode(str: string) {
   return Buffer.from(str, "base64").toString("utf-8");
 }
 
-interface JwtUser {
+export interface JwtUser {
   sub: string;
   role: "USER" | "ADMIN";
   expired_at: number;
@@ -21,13 +21,15 @@ export interface DecodedJwt {
 }
 
 export function decodeJWT(token: string): DecodedJwt {
+  const copy = token;
+  console.log(copy);
   if (!token || typeof token !== "string") {
     throw new Error("Token JWT inválido");
   }
-  
+
   const [headerB64, payloadB64, signatureB64] = token.split(".");
 
-  if (!headerB64 || !payloadB64 || !signatureB64) {
+  if (!headerB64 || !payloadB64) {
     throw new Error("JWT inválido");
   }
 

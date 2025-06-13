@@ -1,4 +1,6 @@
+import { Temporal } from "@js-temporal/polyfill";
+
 export interface ISchedulerProps {
-  onClick: (args: unknown) => void;
-  onEventClick: (args: unknown) => void;
+  onClick: (args: Temporal.PlainDateTime) => void;
+  // onEventClick: (args: unknown) => void;
 }

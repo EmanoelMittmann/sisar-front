@@ -107,3 +107,24 @@ export async function createService(input: UpdateServiceInput): Promise<void> {
     return Promise.reject("Error creating service");
   }
 }
+
+export async function myServicesByUser(): Promise<ListServiceResponse[]> {
+  try {
+    const response = await axios.patch<ListServiceResponse[]>(
+      `${API_URL}/services`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error get services by user");
+  }
+}

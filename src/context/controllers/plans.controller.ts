@@ -128,3 +128,23 @@ export async function listPlanByUser(): Promise<ListPlansResponse> {
     return Promise.reject("Error getting list plan by user");
   }
 }
+
+export async function listPlansByUser(): Promise<ListPlansResponse[]> {
+  try {
+    const response = await axios.get<ListPlansResponse[]>(
+      `${API_URL}/plans`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting list plans by user");
+  }
+}

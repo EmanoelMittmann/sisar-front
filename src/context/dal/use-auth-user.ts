@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { verifySession } from "./verify-session";
+import { verifySession } from "./verify-session.ts";
 
 export const useAuthUser = cache(async () => {
   const session = await verifySession();

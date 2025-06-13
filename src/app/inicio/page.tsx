@@ -41,7 +41,10 @@ export default function Home() {
             >
               <div className="relative w-52 h-52 hover:w-53 hover:h-53 transition-all duration-500 ease-in-out aspect-square mb-2 rounded-lg overflow-hidden">
                 <Image
-                  src={business.imageUrl}
+                  src={
+                    business.imageUrl ||
+                    "https://cdn.pixabay.com/photo/2023/02/01/00/54/company-7759278_1280.png"
+                  }
                   alt={business.name}
                   fill
                   className="object-cover"
@@ -59,7 +62,10 @@ export default function Home() {
             <div key={business.id} className="text-center cursor-pointer">
               <div className="relative w-52 h-52 hover:w-53 hover:h-53 transition-all duration-500 ease-in-out aspect-square mb-2 rounded-lg overflow-hidden">
                 <Image
-                  src={business.imageUrl}
+                  src={
+                    business.imageUrl ||
+                    "https://cdn.pixabay.com/photo/2023/02/01/00/54/company-7759278_1280.png"
+                  }
                   alt={business.name}
                   fill
                   className="object-cover"

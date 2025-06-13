@@ -5,7 +5,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { Button } from "@/components/ui/button";
 import { ISchedulerProps } from "@/@types";
 
-export const Calendar = ({ onClick, onEventClick }: ISchedulerProps) => {
+export const Calendar = ({ onClick }: ISchedulerProps) => {
   const [month, setMonth] = useState(Temporal.Now.plainDateISO().month);
   const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
   const [monthCalendar, setMonthCalendar] = useState<
@@ -108,10 +108,13 @@ export const Calendar = ({ onClick, onEventClick }: ISchedulerProps) => {
         </Button>
       </div>
       <h2 className="text-lg font-semibold">
-        {Temporal.PlainDate.from({ year, month, day: 1 }).toLocaleString("en", {
-          month: "long",
-          year: "numeric",
-        })}
+        {Temporal.PlainDate.from({ year, month, day: 1 }).toLocaleString(
+          "pt-Br",
+          {
+            month: "long",
+            year: "numeric",
+          }
+        )}
       </h2>
       <div className="grid grid-cols-7 py-4">
         {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map(
@@ -126,7 +129,7 @@ export const Calendar = ({ onClick, onEventClick }: ISchedulerProps) => {
         <div className="grid grid-cols-7 flex-grow w-full h-full">
           {monthCalendar.map((day, index) => (
             <div
-              onClick={() => onClick(day)}
+              onClick={() => onClick(day.date)}
               key={index}
               className={`rounded-sm cursor-pointer ${
                 day.isInMonth
@@ -154,7 +157,7 @@ export const Calendar = ({ onClick, onEventClick }: ISchedulerProps) => {
                             className="relative bg-blue-500 text-white rounded-full w-4 h-4"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onEventClick(event);
+                              // onEventClick(event);
                             }}
                           ></div>
                           <p className="text-sm text-gray-300 dark:text-gray-800 hover:text-black dark:hover:text-white whitespace-nowrap">

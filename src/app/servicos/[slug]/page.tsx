@@ -1,94 +1,47 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useQuery } from "@/hooks/use-query";
+import {
+  listAllPlans,
+  ListPlansResponse,
+} from "@/context/controllers/plans.controller";
+import {
+  listAllServices,
+  ListServiceResponse,
+} from "@/context/controllers/services.controller";
 import Link from "next/link";
-import { use, useMemo } from "react";
-// const company_services = [
-//   {
-//     id: 1,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 2,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 3,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 4,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 5,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 6,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 7,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 8,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 9,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 10,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-//   {
-//     id: 11,
-//     name: "Corte de cabelo",
-//     price: "R$ 29,90",
-//     duration: "30 min",
-//   },
-// ];
+import { use, useCallback, useEffect, useState } from "react";
 
 export default function Agendar(_: { params: Promise<{ slug: string }> }) {
   const { slug } = use(_.params);
+  console.log(slug);
+  const [services, setServices] = useState<ListServiceResponse[]>([]);
+  const [plans, setPlans] = useState<ListPlansResponse[]>([]);
 
-  const { data, isLoading } = useQuery("findAllSchedules", [slug]);
-
-  const company_services = useMemo(() => {
-    if (Array.isArray(data) && !isLoading) {
-      return data.map((item: any) => ({
-        id: item.uuid,
-        name: item.service.name,
-        duration: item.service.duration,
-        price: `R$ ${item.service.price.toFixed(2).replace(".", ",")}`,
-      }));
+  const queryServiceByCompany = useCallback(async () => {
+    if (slug !== null) {
+      const request = await listAllServices(slug);
+      setServices(request);
     }
-    return [];
-  }, [data, isLoading]);
+  }, [slug]);
+
+  const queryPlansByCompany = useCallback(async () => {
+    if (slug !== null) {
+      const request = await listAllPlans(slug);
+      setPlans(request);
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    queryServiceByCompany();
+    queryPlansByCompany();
+  }, [queryServiceByCompany, queryPlansByCompany]);
+
+  const mapper = {
+    MONTHLY: "Mensal",
+    WEEKLY: "Semanal",
+    YEARLY: "Anual",
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -99,24 +52,54 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
             <h4 className="font-bold">Populares</h4>
             <Table>
               <TableBody>
-                {company_services.length === 0 && (
+                {services.length === 0 && (
                   <TableRow className="flex justify-center items-center">
                     <TableCell colSpan={4} className="text-center">
                       Nenhum serviço encontrado
                     </TableCell>
                   </TableRow>
                 )}
-                {company_services.map((iterator) => (
+                {services.map((iterator) => (
                   <TableRow
                     key={iterator.id}
                     className="flex justify-between items-center"
                   >
                     <TableCell>{iterator.name}</TableCell>
                     <TableCell>{iterator.duration}</TableCell>
-                    <TableCell>{iterator.price}</TableCell>
+                    <TableCell>R$ {iterator.price.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Link href={`${slug}/agendar`}>
-                        <Button className="cursor-pointer">agendar</Button>
+                      <Link href={`${slug}/agendar/${iterator.id}`}>
+                        <Button className="cursor-pointer">Agendar</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <h4 className="font-bold mt-4">Planos</h4>
+            <Table>
+              <TableBody>
+                {plans.length === 0 && (
+                  <TableRow className="flex justify-center items-center">
+                    <TableCell colSpan={4} className="text-center">
+                      Nenhum plano encontrado
+                    </TableCell>
+                  </TableRow>
+                )}
+                {plans.map((iterator, index) => (
+                  <TableRow
+                    key={index}
+                    className="flex justify-between items-center"
+                  >
+                    <TableCell>{iterator.name}</TableCell>
+                    <TableCell>
+                      {mapper[iterator.recurrent as keyof typeof mapper]}
+                    </TableCell>
+                    <TableCell>R$ {iterator.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Link href={""}>
+                        <Button className="cursor-pointer">Assinar</Button>
                       </Link>
                     </TableCell>
                   </TableRow>

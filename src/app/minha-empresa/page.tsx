@@ -16,12 +16,12 @@ import { DEFAULT_PLANS_FORM } from "@/components/forms/plans";
 import { DEFAULT_SERVICE_FORM } from "@/components/forms/services";
 import { useQuery } from "@/hooks/use-query";
 import {
-  listAllPlans,
+  listPlansByUser,
   ListPlansResponse,
 } from "@/context/controllers/plans.controller";
 import {
-  listAllServices,
   ListServiceResponse,
+  myServicesByUser,
 } from "@/context/controllers/services.controller";
 import { useMutate } from "@/hooks/use-mutate";
 
@@ -64,19 +64,15 @@ export default function Company() {
   const { mutateAsync: updatePlan } = useMutate("updatePlan");
   const { mutateAsync: updateService } = useMutate("updateService");
 
-  const getPlans = useCallback(async () => {
-    if (obj.organization_id !== null) {
-      const request = await listAllPlans(obj.organization_id);
-      setPlans(request);
-    }
-  }, [obj]);
-
   const getServices = useCallback(async () => {
-    if (obj.organization_id !== null) {
-      const request = await listAllServices(obj.organization_id);
-      setServices(request);
-    }
-  }, [obj]);
+    const request = await myServicesByUser();
+    setServices(request);
+  }, []);
+
+  const getPlans = useCallback(async () => {
+    const request = await listPlansByUser();
+    setPlans(request);
+  }, []);
 
   async function handleCreatePlan(data: ICompanyPlansSchema) {
     try {
@@ -100,6 +96,20 @@ export default function Company() {
       .replace(/\.(\d{3})(\d)/, ".$1/$2")
       .replace(/(\d{4})(\d)/, "$1-$2")
       .slice(0, 18); // Ensure it doesn't exceed CNPJ length
+  }
+
+  function formatPhoneNumber(phone: string | undefined): string {
+    if (!phone) return "";
+    const cleanValue = phone.replace(/\D/g, "");
+    if (cleanValue.length <= 10) {
+      return cleanValue
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+    } else {
+      return cleanValue
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2");
+    }
   }
 
   useEffect(() => {
@@ -156,7 +166,7 @@ export default function Company() {
               <Input value={obj?.social_name || ""} disabled />
               <Input value={formatCNPJ(obj?.cnpj) || ""} disabled />
               <Input value={obj?.office || ""} disabled />
-              <Input value={obj?.phone || ""} disabled />
+              <Input value={formatPhoneNumber(obj?.phone) || ""} disabled />
               <Input value={obj?.email || ""} disabled />
             </div>
           </div>

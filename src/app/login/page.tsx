@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { signin } from "@/context/controllers/auth.controller";
 import { toast } from "sonner";
-import { createSession } from "@/context/session/create-session";
+import { createSession } from "@/context/dal/create-session";
 
 export default function Login() {
   const navigate = useRouter();
