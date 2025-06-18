@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { signin } from "@/context/controllers/auth.controller";
 import { toast } from "sonner";
-import { createSession } from "@/context/dal/create-session";
+import { decodeJWT } from "@/helpers/jwt-decode";
 
 export default function Login() {
   const navigate = useRouter();
@@ -28,16 +28,24 @@ export default function Login() {
     try {
       const response = await signin(data);
       if (response.token) {
-        createSession(response.token);
         localStorage.setItem("access_token", response.token);
-        document.startViewTransition(() => {
-          toast.success("Login realizado com sucesso");
-          navigate.push("/inicio");
-        });
+        return handleRedirectByRole(response.token);
       }
     } catch (error) {
       console.error(error);
       toast.error("E-mail ou senha inválidos");
+    }
+  }
+
+  async function handleRedirectByRole(access_token: string) {
+    const decodedtoken = decodeJWT(access_token);
+
+    if (decodedtoken.payload.role === "ADMIN") {
+      navigate.push("/admin");
+    }
+
+    if (decodedtoken.payload.role === "USER") {
+      navigate.push("/inicio");
     }
   }
 

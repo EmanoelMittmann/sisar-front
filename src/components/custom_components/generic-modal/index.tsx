@@ -8,19 +8,15 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
 export const GenericModal = forwardRef<IRefActions, IGenericModalProps>(
   ({ title, render, handler }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const ctx = useFormContext()
-
-    function handleClose() {
-      ctx.reset();
+    const handleClose = useCallback(() => {
       setIsOpen(false);
-    }
+    }, []);
 
     useImperativeHandle(
       ref,
@@ -30,7 +26,7 @@ export const GenericModal = forwardRef<IRefActions, IGenericModalProps>(
         },
         handleClose,
       }),
-      []
+      [handleClose]
     );
 
     return (

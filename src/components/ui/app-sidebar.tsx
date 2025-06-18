@@ -12,12 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import {
-  Home,
-  LogOut,
-  CalendarRange,
-  CreditCard,
-} from "lucide-react";
+import { Home, LogOut, CalendarRange, CreditCard } from "lucide-react";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -30,7 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { ThemeButton } from "@/theme/theme-button";
 import { useRouter } from "next/navigation";
 import { useAuthCtx } from "@/context/dal/auth-dal";
-import { use } from "react";
+// import { use } from "react";
 
 const LIST_MENU = [
   { title: "Início", icon: <Home />, path: "/inicio" },
@@ -85,15 +80,14 @@ export function AppSidebar() {
 
 const CustomDropdown = () => {
   const navigate = useRouter();
-  const ctx = useAuthCtx();
-  const user = use(ctx);
+  const { user } = useAuthCtx();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="w-full flex flex-row-reverse items-center justify-end gap-4 cursor-pointer p-2">
           <h5 className="text-ellipsis overflow-hidden whitespace-nowrap font-bold">
-            Emanoel Leffa
+            {user?.username}
           </h5>
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
@@ -102,7 +96,7 @@ const CustomDropdown = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        {user?.role === "ADMIN" && (
+        {user?.role == "ADMIN" && (
           <>
             <DropdownMenuLabel
               onClick={() => navigate?.push("/minha-empresa")}
@@ -124,7 +118,7 @@ const CustomDropdown = () => {
             <span>Configurações</span>
           </DropdownMenuItem> */}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem
           onClick={() => navigate?.push("/login")}
           className="cursor-pointer"

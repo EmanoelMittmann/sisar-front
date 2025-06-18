@@ -2,11 +2,12 @@
 import NavigationMobile from "@/components/custom_components/navigation-mobile";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AuthDalProvider } from "@/context/dal/auth-dal";
 import { ReactNode } from "react";
 
 export default function AgendarLayout({ children }: { children: ReactNode }) {
   return (
-    <div>
+    <AuthDalProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger className="hidden max-sm:hidden sm:hidden md:flex lg:flex lg:items-center" />
@@ -15,6 +16,6 @@ export default function AgendarLayout({ children }: { children: ReactNode }) {
           <div className="h-full w-full">{children}</div>
         </main>
       </SidebarProvider>
-    </div>
+    </AuthDalProvider>
   );
 }

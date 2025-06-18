@@ -3,7 +3,6 @@ import { JSX, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, UseFormReturn } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export function DEFAULT_SERVICE_FORM(
   form: UseFormReturn<ICompanyServiceSchema>
@@ -36,7 +35,7 @@ export function DEFAULT_SERVICE_FORM(
           {...form.register("estimate")}
         />
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
+      {/* <div className="grid grid-cols-4 items-center gap-4">
         <div className="flex flex-row gap-2 items-center">
           <Checkbox
             checked={form.watch("is_quantitative")}
@@ -50,7 +49,7 @@ export function DEFAULT_SERVICE_FORM(
             </label>
           </div>
         </div>
-      </div>
+      </div> */}
     </Form>
   );
 }

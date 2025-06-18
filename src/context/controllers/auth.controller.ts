@@ -46,7 +46,6 @@ export async function signin(input: ISignInInput): Promise<ISignInResponse> {
     );
 
     return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
     return Promise.reject(error);
@@ -58,10 +57,9 @@ export async function signup(input: ISignUpInput): Promise<ISignUpResponse> {
     const response = await axios.post(`${API_URL}/auth/signup`, input);
 
     return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
-    return Promise.reject(error.response.data);
+    return Promise.reject("Error signing up user");
   }
 }
 

@@ -13,7 +13,6 @@ export const ListenerErrorClientProvider = ({
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
-      console.log(error);
       if (error.response) {
         toast.warning(error.response.data.message);
       }

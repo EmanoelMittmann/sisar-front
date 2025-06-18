@@ -94,7 +94,7 @@ export default function Agendamentos() {
   );
 }
 
-function ScheduleTable({
+export function ScheduleTable({
   schedules,
 }: {
   schedules: Agendamento[];
@@ -114,7 +114,7 @@ function ScheduleTable({
           {schedules.map((item: Agendamento, index: number) => (
             <TableRow
               key={index}
-              className="hover:bg-gray-700 cursor-pointer flex justify-between items-center p-2"
+              className="hover:bg-gray-300 cursor-pointer flex justify-between items-center p-2"
             >
               <TableCell>
                 <div className="flex flex-col items-start">

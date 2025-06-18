@@ -14,7 +14,6 @@ import { use, useCallback, useEffect, useState } from "react";
 
 export default function Agendar(_: { params: Promise<{ slug: string }> }) {
   const { slug } = use(_.params);
-  console.log(slug);
   const [services, setServices] = useState<ListServiceResponse[]>([]);
   const [plans, setPlans] = useState<ListPlansResponse[]>([]);
 

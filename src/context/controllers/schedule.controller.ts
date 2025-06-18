@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import axios from "axios";
 
 interface ICreateScheduleInput {
@@ -21,6 +21,23 @@ interface IScheduleResponse {
   status: string;
 }
 
+interface DetailsScheduleProps {
+  uuid: string;
+  contract_date: Date;
+  status: string;
+  service: {
+    name: string;
+    price: string;
+    duration: string;
+  };
+  user: {
+    name: string;
+    email: string;
+    phone: string;
+    cpf: string;
+  } | null;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function findAllSchedules(): Promise<IScheduleResponse[]> {
@@ -30,7 +47,9 @@ export async function findAllSchedules(): Promise<IScheduleResponse[]> {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
         },
       }
     );
@@ -41,6 +60,29 @@ export async function findAllSchedules(): Promise<IScheduleResponse[]> {
   }
 }
 
+export async function findScheduleByOrganization(): Promise<
+  IScheduleResponse[]
+> {
+  try {
+    const response = await axios.get<IScheduleResponse[]>(
+      `${API_URL}/schedules/by-company`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting schedules by organization");
+  }
+}
+
 export async function findScheduleById(id: string): Promise<IScheduleResponse> {
   try {
     const response = await axios.get<IScheduleResponse>(
@@ -48,7 +90,9 @@ export async function findScheduleById(id: string): Promise<IScheduleResponse> {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
         },
       }
     );
@@ -59,18 +103,16 @@ export async function findScheduleById(id: string): Promise<IScheduleResponse> {
   }
 }
 
-export async function createSchedule(input: ICreateScheduleInput): Promise<void> {
+export async function createSchedule(
+  input: ICreateScheduleInput
+): Promise<void> {
   try {
-    await axios.post<void>(
-      `${API_URL}/schedules/create`,
-      input,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
-        },
-      }
-    );
+    await axios.post<void>(`${API_URL}/schedules/create`, input, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
   } catch (error) {
     console.error(error);
     return Promise.reject("Error creating schedule");
@@ -79,35 +121,77 @@ export async function createSchedule(input: ICreateScheduleInput): Promise<void>
 
 export async function deleteSchedule(id: string): Promise<void> {
   try {
-    await axios.delete<void>(
-      `${API_URL}/schedules/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
-        },
-      }
-    );
+    await axios.delete<void>(`${API_URL}/schedules/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
   } catch (error) {
     console.error(error);
     return Promise.reject("Error deleting schedule");
   }
 }
 
-export async function updateSchedule(id: string, input: ICreateScheduleInput): Promise<void> {
+export async function updateSchedule(
+  id: string,
+  input: ICreateScheduleInput
+): Promise<void> {
   try {
-    await axios.put<void>(
-      `${API_URL}/schedules/${id}`,
-      input,
+    await axios.put<void>(`${API_URL}/schedules/${id}`, input, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error updating schedule");
+  }
+}
+
+export async function detailsSchedule(
+  schedule_uuid: string
+): Promise<DetailsScheduleProps> {
+  try {
+    const response = await axios.get<DetailsScheduleProps>(
+      `${API_URL}/schedules/${schedule_uuid}/details`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting schedule details");
+  }
+}
+
+export async function alterStatus(
+  scheduleUuid: string,
+  status: "PENDING" | "FINISH" | "CANCELED" | "NOT_PAY"
+): Promise<void> {
+  try {
+    await axios.put<void>(
+      `${API_URL}/schedules/alter-status/${scheduleUuid}`,
+      { status },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
         },
       }
     );
   } catch (error) {
     console.error(error);
-    return Promise.reject("Error updating schedule");
+    return Promise.reject("Error updating schedule status");
   }
 }

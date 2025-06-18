@@ -1,20 +1,50 @@
 "use client";
 
-import { createContext, useContext } from "react";
-import { JwtUser } from "@/helpers/jwt-decode";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { decodeJWT, JwtUser } from "@/helpers/jwt-decode";
 
-export const AuthDataAccessLayer =
-  createContext<Promise<JwtUser | null> | null>(null);
+interface IAuthDataAccessLayer {
+  user: JwtUser | null;
+  setUser: Dispatch<SetStateAction<JwtUser | null>>;
+}
+
+export const AuthDataAccessLayer = createContext({} as IAuthDataAccessLayer);
 
 export const AuthDalProvider = ({
   children,
-  userPromise,
 }: {
   children: React.ReactNode;
-  userPromise: Promise<JwtUser | null>;
 }) => {
+  const [user, setUser] = useState<JwtUser | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        try {
+          const decodedUser = decodeJWT(token);
+          setUser(decodedUser.payload);
+        } catch (error) {
+          console.error("Failed to decode user from token:", error);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
-    <AuthDataAccessLayer.Provider value={userPromise}>
+    <AuthDataAccessLayer.Provider value={{ user, setUser }}>
       {children}
     </AuthDataAccessLayer.Provider>
   );

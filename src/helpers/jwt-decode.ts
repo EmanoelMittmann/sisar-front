@@ -12,6 +12,7 @@ export interface JwtUser {
   role: "USER" | "ADMIN";
   expired_at: number;
   iat: number;
+  username: string;
 }
 
 export interface DecodedJwt {
@@ -21,8 +22,6 @@ export interface DecodedJwt {
 }
 
 export function decodeJWT(token: string): DecodedJwt {
-  const copy = token;
-  console.log(copy);
   if (!token || typeof token !== "string") {
     throw new Error("Token JWT inválido");
   }

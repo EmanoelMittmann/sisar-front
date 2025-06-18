@@ -64,8 +64,6 @@ export default function Register() {
     }
   }
 
-  console.log(form.watch("is_company"));
-
   return (
     <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>

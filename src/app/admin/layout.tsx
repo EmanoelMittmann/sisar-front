@@ -2,6 +2,7 @@
 import NavigationMobile from "@/components/custom_components/navigation-mobile";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AuthDalProvider } from "@/context/dal/auth-dal";
 
 export default function AdminLayout({
   children,
@@ -9,7 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <AuthDalProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger className="hidden max-sm:hidden sm:hidden md:flex lg:flex items-center" />
@@ -18,6 +19,6 @@ export default function AdminLayout({
           <div className="h-full w-full">{children}</div>
         </main>
       </SidebarProvider>
-    </div>
+    </AuthDalProvider>
   );
 }

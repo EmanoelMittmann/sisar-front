@@ -4,6 +4,7 @@ import PopoverMenu from "@/components/custom_components/popover";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { listPlansByUser } from "@/context/controllers/plans.controller";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 interface Assinatura {
@@ -19,16 +20,18 @@ interface Assinatura {
 export default function Assinaturas() {
   const [plans, setPlans] = useState<Assinatura[]>([]);
 
+  const MAPPER_RECURRENCIA = {
+    WEEKLY: "Semanal",
+    MONTHLY: "Mensal",
+    YEARLY: "Anual",
+  };
+
+  const navigate = useRouter();
+
   const getPlans = useCallback(async () => {
     const data = await listPlansByUser();
     setPlans(data as Assinatura[]);
   }, []);
-
-  // const VARIANT_STATUS: Record<"Ativo" | "Inativo", "default" | "destructive"> =
-  //   {
-  //     Ativo: "default",
-  //     Inativo: "destructive",
-  //   };
 
   function buildPopoverOpts(id: string): PopoverType[] {
     return [
@@ -38,7 +41,7 @@ export default function Assinaturas() {
       },
       {
         label: "Detalhes",
-        onClick: () => console.log(`Exibindo detalhes da assinatura ${id}`),
+        onClick: () => navigate.push(`/assinaturas/${id}`),
       },
     ];
   }
@@ -59,7 +62,7 @@ export default function Assinaturas() {
               {plans.map((item, index) => (
                 <TableRow
                   key={index}
-                  className="hover:bg-gray-700 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
+                  className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
                 >
                   <TableCell>{item.name}</TableCell>
                   <TableCell>
@@ -67,8 +70,12 @@ export default function Assinaturas() {
                       {item.status ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
+                  <TableCell>{MAPPER_RECURRENCIA[item.recurrent]}</TableCell>
                   <TableCell>
-                    <PopoverMenu options={buildPopoverOpts("123")} />
+                    {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                  </TableCell>
+                  <TableCell>
+                    <PopoverMenu options={buildPopoverOpts(item.uuid)} />
                   </TableCell>
                 </TableRow>
               ))}
