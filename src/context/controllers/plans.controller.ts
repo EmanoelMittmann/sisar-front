@@ -109,10 +109,11 @@ export async function getPlanById(id: string): Promise<ListPlansResponse> {
   }
 }
 
-export async function listPlanByUser(): Promise<ListPlansResponse> {
+export async function listPlanByUser(): Promise<ListPlansResponse[]> {
   try {
-    const response = await axios.get<ListPlansResponse>(
+    const response = await axios.patch<ListPlansResponse[]>(
       `${API_URL}/plans/user`,
+      {},
       {
         headers: {
           "Content-Type": "application/json",
@@ -131,17 +132,12 @@ export async function listPlanByUser(): Promise<ListPlansResponse> {
 
 export async function listPlansByUser(): Promise<ListPlansResponse[]> {
   try {
-    const response = await axios.get<ListPlansResponse[]>(
-      `${API_URL}/plans`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem(
-            "access_token"
-          )}`,
-        },
-      }
-    );
+    const response = await axios.get<ListPlansResponse[]>(`${API_URL}/plans`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error(error);

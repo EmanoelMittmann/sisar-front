@@ -1,5 +1,13 @@
 "use client";
-import { JSX, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  JSX,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -12,8 +20,6 @@ import ClockIcon from "@/theme/icons/clock-icon";
 import { Badge } from "@/components/ui/badge";
 import PopoverMenu from "@/components/custom_components/popover";
 import { PopoverMenu as PopoverType } from "@/@types/generics/options";
-import { useGenericModal } from "@/hooks/useGenericModal";
-import { IRefActions } from "@/@types";
 import {
   Select,
   SelectContent,
@@ -24,6 +30,14 @@ import {
 import { toast } from "sonner";
 import { listPublicSchedules } from "@/context/controllers/public-schedule.controller";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type StatusType = "PENDING" | "FINISH" | "CANCELED" | "NOT_PAY";
 interface Agendamento {
@@ -71,6 +85,11 @@ function transformDate(dateString: string): string {
 
 export default function AdminInicio() {
   const [schedules, setSchedules] = useState<Agendamento[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [status, setStatus] = useState<StatusType>("PENDING");
+  const [currentScheduleId, setCurrentScheduleId] = useState<string | null>(
+    null
+  );
 
   const getScheduleByCompany = useCallback(async () => {
     try {
@@ -87,7 +106,32 @@ export default function AdminInicio() {
     getScheduleByCompany();
   }, [getScheduleByCompany]);
 
+  const filteredSchedules = useMemo(() => {
+    if (!search) return schedules;
+
+    return schedules.filter((item) =>
+      item.service.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [schedules, search]);
+
+  async function handleAlterStatus(scheduleId: string, status: StatusType) {
+    try {
+      await alterStatus(scheduleId, status);
+      toast.success("Status alterado com sucesso!");
+      setCurrentScheduleId(null);
+      getScheduleByCompany();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const { user } = useAuthCtx();
+
+  useEffect(() => {
+    setStatus(
+      schedules.find((s) => s.uuid === currentScheduleId)?.status || "PENDING"
+    );
+  }, [currentScheduleId, schedules]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -103,10 +147,68 @@ export default function AdminInicio() {
       <section>
         <h4 className="text-xl font-semibold">Agendamentos Recentes</h4>
         <div className="flex flex-row items-center justify-start py-4 gap-x-4">
-          <Input className="w-56" placeholder="Buscar" />
+          <Input
+            className="w-56"
+            placeholder="Buscar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
         <div className="overflow-y-scroll overflow-x-hidden h-[600px]">
-          <ScheduleTable schedules={schedules} refetch={getScheduleByCompany} />
+          <Dialog
+            open={!!currentScheduleId}
+            onOpenChange={() => setCurrentScheduleId(null)}
+          >
+            <DialogTitle></DialogTitle>
+            <DialogContent>
+              <DialogHeader>Editar Status</DialogHeader>
+              <div className="w-full">
+                <Select
+                  onValueChange={(value) => {
+                    setStatus(value as StatusType);
+                  }}
+                  value={status}
+                >
+                  <SelectTrigger className="w-[343px] max-sm:w-[245px] sm:w-[460px]">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">Pendente</SelectItem>
+                    <SelectItem value="FINISH">Finalizado</SelectItem>
+                    <SelectItem value="CANCELED">Cancelado</SelectItem>
+                    <SelectItem value="NOT_PAY">Não Pago</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="ghost"
+                  className="cursor-pointer"
+                  onClick={() => setCurrentScheduleId(null)}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    if (!currentScheduleId) {
+                      toast.error(
+                        "Selecione um agendamento para alterar o status."
+                      );
+                      return;
+                    }
+                    await handleAlterStatus(currentScheduleId, status);
+                  }}
+                >
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <ScheduleTable
+            schedules={filteredSchedules}
+            setCurrentScheduleId={setCurrentScheduleId}
+          />
         </div>
       </section>
     </div>
@@ -115,13 +217,11 @@ export default function AdminInicio() {
 
 export function ScheduleTable({
   schedules,
-  refetch,
+  setCurrentScheduleId,
 }: {
   schedules: Agendamento[];
-  refetch: () => void;
+  setCurrentScheduleId: Dispatch<SetStateAction<string | null>>;
 }): JSX.Element {
-  const modalRef = useRef<IRefActions>(null);
-  const [status, setStatus] = useState<StatusType>("PENDING");
   const navigate = useRouter();
 
   function buildPopoverOpts(id: string): PopoverType[] {
@@ -132,48 +232,10 @@ export function ScheduleTable({
       },
       {
         label: "Editar Status",
-        onClick: () => modalRef.current?.handleOpen(),
+        onClick: () => setCurrentScheduleId(id),
       },
     ];
   }
-
-  async function handleAlterStatus(scheduleId: string, status: StatusType) {
-    try {
-      await alterStatus(scheduleId, status);
-      toast.success("Status alterado com sucesso!");
-      modalRef.current?.handleClose();
-      refetch();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const select_form = (): JSX.Element => {
-    return (
-      <div className="w-full">
-        <Select
-          onValueChange={(value) => {
-            setStatus(value as StatusType);
-          }}
-          value={status}
-        >
-          <SelectTrigger className="w-[343px] max-sm:w-[245px] sm:w-[460px]">
-            <SelectValue placeholder="Selecione" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="PENDING">Pendente</SelectItem>
-            <SelectItem value="FINISH">Finalizado</SelectItem>
-            <SelectItem value="CANCELED">Cancelado</SelectItem>
-            <SelectItem value="NOT_PAY">Não Pago</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    );
-  };
-
-  const { constructModal } = useGenericModal();
-
-  console.log(schedules);
 
   const table = useMemo(() => {
     if (schedules.length === 0) {
@@ -190,14 +252,8 @@ export function ScheduleTable({
           {schedules.map((item: Agendamento, index: number) => (
             <TableRow
               key={index}
-              className="hover:bg-gray-300 cursor-pointer flex justify-between items-center p-2"
+              className="hover:bg-gray-300 dark:hover:bg-gray-900 cursor-pointer flex justify-between items-center p-2"
             >
-              {constructModal(
-                modalRef,
-                "Editar status de agendamento",
-                select_form(),
-                () => handleAlterStatus(item.uuid, status)
-              )}
               <TableCell>
                 <div className="flex flex-col justify-start items-start">
                   <span className="text-sm text-black dark:text-white font-bold">
@@ -238,7 +294,7 @@ export function ScheduleTable({
         </TableBody>
       </Table>
     );
-  }, [constructModal, schedules]);
+  }, [schedules]);
 
   return table;
 }

@@ -2,13 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
-  listAllPlans,
+  listPlanByUser,
   ListPlansResponse,
 } from "@/context/controllers/plans.controller";
+import { assocPlanToUser } from "@/context/controllers/schedule.controller";
 import {
   listAllServices,
   ListServiceResponse,
 } from "@/context/controllers/services.controller";
+import { useAuthCtx } from "@/context/dal/auth-dal";
 import Link from "next/link";
 import { use, useCallback, useEffect, useState } from "react";
 
@@ -26,10 +28,20 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
 
   const queryPlansByCompany = useCallback(async () => {
     if (slug !== null) {
-      const request = await listAllPlans(slug);
+      const request = await listPlanByUser();
       setPlans(request);
     }
   }, [slug]);
+
+  async function assocPlan(planId: string, userId: string) {
+    try {
+      await assocPlanToUser(planId, userId);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const { user } = useAuthCtx();
 
   useEffect(() => {
     queryServiceByCompany();
@@ -97,9 +109,14 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
                     </TableCell>
                     <TableCell>R$ {iterator.price.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Link href={""}>
-                        <Button className="cursor-pointer">Assinar</Button>
-                      </Link>
+                      <Button
+                        className="cursor-pointer"
+                        onClick={() =>
+                          assocPlan(iterator.uuid, user?.sub as string)
+                        }
+                      >
+                        Assinar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

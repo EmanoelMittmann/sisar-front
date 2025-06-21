@@ -10,6 +10,7 @@ function base64UrlDecode(str: string) {
 export interface JwtUser {
   sub: string;
   role: "USER" | "ADMIN";
+  image: string;
   expired_at: number;
   iat: number;
   username: string;

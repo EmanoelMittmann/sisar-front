@@ -3,7 +3,7 @@ import { PopoverMenu as PopoverType } from "@/@types/generics/options";
 import PopoverMenu from "@/components/custom_components/popover";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { listPlansByUser } from "@/context/controllers/plans.controller";
+import { listPlanByUser } from "@/context/controllers/plans.controller";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -29,7 +29,7 @@ export default function Assinaturas() {
   const navigate = useRouter();
 
   const getPlans = useCallback(async () => {
-    const data = await listPlansByUser();
+    const data = await listPlanByUser();
     setPlans(data as Assinatura[]);
   }, []);
 
@@ -59,26 +59,32 @@ export default function Assinaturas() {
           </h5>
           <Table>
             <TableBody>
-              {plans.map((item, index) => (
-                <TableRow
-                  key={index}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
-                >
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>
-                    <Badge variant={item.status ? "default" : "destructive"}>
-                      {item.status ? "Ativo" : "Inativo"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{MAPPER_RECURRENCIA[item.recurrent]}</TableCell>
-                  <TableCell>
-                    {new Date(item.dueDate).toLocaleDateString("pt-BR")}
-                  </TableCell>
-                  <TableCell>
-                    <PopoverMenu options={buildPopoverOpts(item.uuid)} />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {Array.isArray(plans) && plans.length > 0 ? (
+                plans.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
+                  >
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={item.status ? "default" : "destructive"}>
+                        {item.status ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{MAPPER_RECURRENCIA[item.recurrent]}</TableCell>
+                    <TableCell>
+                      {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                    </TableCell>
+                    <TableCell>
+                      <PopoverMenu options={buildPopoverOpts(item.uuid)} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <div className="flex justify-center items-center h-32">
+                  <span className="text-gray-500">Nenhum plano encontrado</span>
+                </div>
+              )}
             </TableBody>
           </Table>
         </section>

@@ -57,7 +57,7 @@ export default function DetalhesDeAgendamento({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col items-center gap-12">
-        <section className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
+        <section className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
           <h5 className="text-2xl font-bold mb-6 text-start">
             Detalhes do Agendamento
           </h5>
@@ -65,7 +65,7 @@ export default function DetalhesDeAgendamento({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <h6 className="text-lg font-semibold text-gray-800">
+                  <h6 className="text-lg font-semibold text-gray-800 dark:text-white">
                     Informações do Serviço
                   </h6>
                   <div className="mt-2 space-y-2">
@@ -75,7 +75,7 @@ export default function DetalhesDeAgendamento({
                     </p>
                     <p className="flex justify-between">
                       <span className="font-medium">Preço:</span>{" "}
-                      <span>{schedule.service.price}</span>
+                      <span>R$ {Number(schedule.service.price).toFixed(2)}</span>
                     </p>
                     <p className="flex justify-between">
                       <span className="font-medium">Duração:</span>{" "}
@@ -85,7 +85,7 @@ export default function DetalhesDeAgendamento({
                 </div>
 
                 <div>
-                  <h6 className="text-lg font-semibold text-gray-800">
+                  <h6 className="text-lg font-semibold text-gray-800 dark:text-white">
                     Status do Agendamento
                   </h6>
                   <div className="mt-2">
@@ -112,7 +112,7 @@ export default function DetalhesDeAgendamento({
                 </div>
 
                 <div>
-                  <h6 className="text-lg font-semibold text-gray-800">
+                  <h6 className="text-lg font-semibold text-gray-800 dark:text-white">
                     Data e Hora
                   </h6>
                   <p className="mt-2">
@@ -133,7 +133,7 @@ export default function DetalhesDeAgendamento({
 
               <div className="space-y-4">
                 <div>
-                  <h6 className="text-lg font-semibold text-gray-800">
+                  <h6 className="text-lg font-semibold text-gray-800 dark:text-white">
                     Informações do Cliente
                   </h6>
                   <div className="mt-2 space-y-2">

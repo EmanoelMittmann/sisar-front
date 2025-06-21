@@ -195,3 +195,29 @@ export async function alterStatus(
     return Promise.reject("Error updating schedule status");
   }
 }
+
+export async function assocPlanToUser(
+  planId: string,
+  userId: string
+): Promise<void> {
+  try {
+    await axios.post<void>(
+      `${API_URL}/schedules/assoc-plan-to-user`,
+      {
+        plan_id: planId,
+        user_id: userId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error associating plan to user");
+  }
+}

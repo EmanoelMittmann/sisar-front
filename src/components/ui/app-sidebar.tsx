@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { Home, LogOut, CalendarRange, CreditCard } from "lucide-react";
+import { Home, LogOut, CalendarRange, CreditCard, Store } from "lucide-react";
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -28,30 +28,48 @@ import { useAuthCtx } from "@/context/dal/auth-dal";
 // import { use } from "react";
 
 const LIST_MENU = [
-  { title: "Início", icon: <Home />, path: "/inicio" },
+  { title: "Início", icon: <Home />, path: "/inicio", type_user: "USER" },
   {
     title: "Agendamentos",
     icon: <CalendarRange />,
     path: "/agendamentos",
+    type_user: "USER",
   },
   {
     title: "Assinaturas",
     icon: <CreditCard />,
     path: "/assinaturas",
+    type_user: "USER",
+  },
+  {
+    title: "Dashboard",
+    icon: <Home />,
+    path: "/admin",
+    type_user: "ADMIN",
+  },
+  {
+    title: "Minha Empresa",
+    icon: <Store />,
+    path: "/minha-empresa",
+    type_user: "ADMIN",
   },
 ];
 
 export function AppSidebar() {
-  const listOptions = LIST_MENU.map((item) => (
-    <SidebarMenuItem key={item.title}>
-      <SidebarMenuButton asChild>
-        <a href={item.path}>
-          {item.icon}
-          <span>{item.title}</span>
-        </a>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  ));
+  const { user } = useAuthCtx();
+  const listOptions = LIST_MENU.map((item) => {
+    if (user?.role == item.type_user)
+      return (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <a href={item.path}>
+              {item.icon}
+              <span>{item.title}</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      );
+  });
 
   return (
     <Sidebar variant="sidebar">
@@ -90,7 +108,7 @@ const CustomDropdown = () => {
             {user?.username}
           </h5>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src={user?.image ?? "https://github.com/shadcn.png"} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
