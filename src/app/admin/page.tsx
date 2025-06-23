@@ -215,7 +215,7 @@ export default function AdminInicio() {
   );
 }
 
-export function ScheduleTable({
+function ScheduleTable({
   schedules,
   setCurrentScheduleId,
 }: {

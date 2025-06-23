@@ -10,7 +10,7 @@ export interface ListPlansResponse {
   dueDate: Date;
 }
 
-interface ICreatePlanInput {
+export interface ICreatePlanInput {
   name: string;
   price: number;
   recurrent: string;

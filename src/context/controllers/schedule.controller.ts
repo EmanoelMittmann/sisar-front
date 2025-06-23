@@ -60,6 +60,34 @@ export async function findAllSchedules(): Promise<IScheduleResponse[]> {
   }
 }
 
+export async function generateCharge(
+  client_id: string,
+  value: number
+): Promise<{ link: string }> {
+  try {
+    const response = await axios.post<{ link: string }>(
+      `${API_URL}/schedules/new-charge`,
+      {
+        client_id,
+        value,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error generating charge");
+  }
+}
+
 export async function findScheduleByOrganization(): Promise<
   IScheduleResponse[]
 > {

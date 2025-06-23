@@ -103,7 +103,7 @@ export default function AgendarPublico({
       });
       modalRef.current?.handleClose();
       toast.success("Horário agendado com sucesso!");
-      navigate.push("/sucesso-agendamento");
+      navigate.push("/sucesso-agendamento-publico");
     } catch (error) {
       console.error(error);
     }

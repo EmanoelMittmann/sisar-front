@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
-  listPlanByUser,
+  listAllPlans,
   ListPlansResponse,
 } from "@/context/controllers/plans.controller";
 import { assocPlanToUser } from "@/context/controllers/schedule.controller";
@@ -28,7 +28,7 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
 
   const queryPlansByCompany = useCallback(async () => {
     if (slug !== null) {
-      const request = await listPlanByUser();
+      const request = await listAllPlans(slug);
       setPlans(request);
     }
   }, [slug]);

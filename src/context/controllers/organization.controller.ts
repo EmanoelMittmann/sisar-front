@@ -7,7 +7,7 @@ interface ListEstabelishmentResponse {
   image_path: string;
 }
 
-interface IFindUser {
+export interface IFindUser {
   uuid: string;
   social_name: string;
   cnpj: string;

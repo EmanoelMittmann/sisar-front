@@ -25,7 +25,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { ThemeButton } from "@/theme/theme-button";
 import { useRouter } from "next/navigation";
 import { useAuthCtx } from "@/context/dal/auth-dal";
-// import { use } from "react";
 
 const LIST_MENU = [
   { title: "Início", icon: <Home />, path: "/inicio", type_user: "USER" },
@@ -108,7 +107,12 @@ const CustomDropdown = () => {
             {user?.username}
           </h5>
           <Avatar>
-            <AvatarImage src={user?.image ?? "https://github.com/shadcn.png"} />
+            <AvatarImage
+              src={
+                user?.image ??
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqlDGXYTrMG8sjQ_yDUeevuJ1N55HysP9IS_UEFfzx-Kw8hsHnW7pgK1g&s"
+              }
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
@@ -130,13 +134,6 @@ const CustomDropdown = () => {
           <ThemeButton />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          {/* <DropdownMenuItem>
-            <Settings />
-            <span>Configurações</span>
-          </DropdownMenuItem> */}
-        </DropdownMenuGroup>
-        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem
           onClick={() => navigate?.push("/login")}
           className="cursor-pointer"

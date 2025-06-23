@@ -16,9 +16,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { createSchedule } from "@/context/controllers/schedule.controller";
 import { useGenericModal } from "@/hooks/useGenericModal";
 import { Temporal } from "@js-temporal/polyfill";
+import { useRouter } from "next/navigation";
 import { JSX, use, useRef } from "react";
 import { Form, useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 const generateInterval = (
   startHour: number,
@@ -86,25 +86,22 @@ export default function Agendar(_: {
     defaultValues: {
       interval: "",
       description: "",
-      currentDate: new Date(),
     },
   });
+  const navigate = useRouter();
 
   const handleSubmit = async (data: ISchedulerSchema) => {
-    if (data.currentDate === null) {
-      toast.error("Por favor, selecione uma data válida.");
-      return;
-    }
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const date = data.interval.split("*")[0];
+    const transformedDate = new Date(date);
     try {
       await createSchedule({
-        contract_date: data.currentDate as Date,
-        service_id: service_id, // Replace with actual service ID
+        contract_date: transformedDate,
+        service_id: service_id,
         remember_user: true,
       });
 
       modalRef.current?.handleClose();
+      navigate.push("/sucesso-agendamento");
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -119,7 +116,7 @@ export default function Agendar(_: {
           </div>
           <div className="w-full h-full">
             <Label className="pl-2">Horários</Label>
-            <Select>
+            <Select onValueChange={(value) => form.setValue("interval", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Selecione" />
               </SelectTrigger>

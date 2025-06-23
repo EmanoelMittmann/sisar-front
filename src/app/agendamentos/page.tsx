@@ -75,26 +75,40 @@ export default function Agendamentos() {
           <h5 className="text-2xl font-semibold mb-6 text-start">
             Agendamentos Pendentes
           </h5>
-          <ScheduleTable schedules={schedules.pending} />
+          <ScrollContent>
+            <ScheduleTable schedules={schedules.pending} />
+          </ScrollContent>
         </section>
         <section className="w-4xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-4xl">
           <h5 className="text-2xl font-semibold mb-6 text-start">
             Agendamentos Finalizados
           </h5>
-          <ScheduleTable schedules={schedules.finished} />
+          <ScrollContent>
+            <ScheduleTable schedules={schedules.finished} />
+          </ScrollContent>
         </section>
         <section className="w-4xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-4xl">
           <h5 className="text-2xl font-semibold mb-6 text-start">
             Agendamentos Cancelado
           </h5>
-          <ScheduleTable schedules={schedules.canceled} />
+          <ScrollContent>
+            <ScheduleTable schedules={schedules.canceled} />
+          </ScrollContent>
         </section>
       </div>
     </div>
   );
 }
 
-export function ScheduleTable({
+function ScrollContent({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="h-[200px] overflow-y-auto border rounded-md">
+      {children}
+    </div>
+  );
+}
+
+function ScheduleTable({
   schedules,
 }: {
   schedules: Agendamento[];

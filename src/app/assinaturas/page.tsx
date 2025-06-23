@@ -57,38 +57,54 @@ export default function Assinaturas() {
           <h5 className="text-2xl font-semibold mb-6 text-start">
             Minhas Assinaturas
           </h5>
-          <Table>
-            <TableBody>
-              {Array.isArray(plans) && plans.length > 0 ? (
-                plans.map((item, index) => (
-                  <TableRow
-                    key={index}
-                    className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
-                  >
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>
-                      <Badge variant={item.status ? "default" : "destructive"}>
-                        {item.status ? "Ativo" : "Inativo"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{MAPPER_RECURRENCIA[item.recurrent]}</TableCell>
-                    <TableCell>
-                      {new Date(item.dueDate).toLocaleDateString("pt-BR")}
-                    </TableCell>
-                    <TableCell>
-                      <PopoverMenu options={buildPopoverOpts(item.uuid)} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <div className="flex justify-center items-center h-32">
-                  <span className="text-gray-500">Nenhum plano encontrado</span>
-                </div>
-              )}
-            </TableBody>
-          </Table>
+          <ScrollContent>
+            <Table>
+              <TableBody>
+                {Array.isArray(plans) && plans.length > 0 ? (
+                  plans.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
+                    >
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={item.status ? "default" : "destructive"}
+                        >
+                          {item.status ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {MAPPER_RECURRENCIA[item.recurrent]}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                      </TableCell>
+                      <TableCell>
+                        <PopoverMenu options={buildPopoverOpts(item.uuid)} />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center h-32">
+                    <span className="text-gray-500">
+                      Nenhum plano encontrado
+                    </span>
+                  </div>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollContent>
         </section>
       </div>
+    </div>
+  );
+}
+
+function ScrollContent({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="h-[780px] overflow-y-auto border rounded-md">
+      {children}
     </div>
   );
 }

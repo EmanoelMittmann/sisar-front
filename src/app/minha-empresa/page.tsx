@@ -14,16 +14,24 @@ import { useAlert } from "@/hooks/use-alert";
 import { useGenericModal } from "@/hooks/useGenericModal";
 import { DEFAULT_PLANS_FORM } from "@/components/forms/plans";
 import { DEFAULT_SERVICE_FORM } from "@/components/forms/services";
-import { useQuery } from "@/hooks/use-query";
 import {
+  ICreatePlanInput,
   listPlansByUser,
   ListPlansResponse,
+  updatePlan,
 } from "@/context/controllers/plans.controller";
 import {
   ListServiceResponse,
   myServicesByUser,
+  updateService,
+  UpdateServiceInput,
 } from "@/context/controllers/services.controller";
 import { useMutate } from "@/hooks/use-mutate";
+import {
+  getEstablishmentByUuid,
+  IFindUser,
+} from "@/context/controllers/organization.controller";
+import { toast } from "sonner";
 
 export default function Company() {
   const serviceRef = React.useRef<IRefActions>(null);
@@ -38,6 +46,9 @@ export default function Company() {
 
   const [plans, setPlans] = useState<ListPlansResponse[]>([]);
   const [services, setServices] = useState<ListServiceResponse[]>([]);
+  const [organization, setOrganization] = useState<IFindUser | null>(null);
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
+  const [currentServiceId, setCurrentServiceId] = useState<string | null>(null);
 
   const service_form = useForm<ICompanyServiceSchema>({
     defaultValues: {
@@ -58,11 +69,43 @@ export default function Company() {
     },
   });
 
-  const { data: obj } = useQuery("getEstablishmentByUuid");
   const { mutateAsync: createPlan } = useMutate("createPlan");
   const { mutateAsync: createService } = useMutate("createService");
-  const { mutateAsync: updatePlan } = useMutate("updatePlan");
-  const { mutateAsync: updateService } = useMutate("updateService");
+
+  async function mutateUpdatePlan(id: string, input: ICreatePlanInput) {
+    if (!id) {
+      toast.warning("ID do plano não fornecido.");
+      return;
+    }
+    try {
+      await updatePlan(id, input);
+      plansEditRef.current?.handleClose();
+      toast.success("Plano atualizado com sucesso!");
+      getPlans();
+    } catch (error) {
+      console.error("Error updating plan:", error);
+    }
+  }
+
+  async function mutateUpdateService(id: string, data: UpdateServiceInput) {
+    if (!id) {
+      toast.warning("ID do serviço não fornecido.");
+      return;
+    }
+    try {
+      await updateService(id, data);
+      serviceEditRef.current?.handleClose();
+      toast.success("Serviço atualizado com sucesso!");
+      getServices();
+    } catch (error) {
+      console.error("Error updating service: ", error);
+    }
+  }
+
+  const findEstablishmentByUuid = useCallback(async () => {
+    const response = await getEstablishmentByUuid();
+    setOrganization(response);
+  }, []);
 
   const getServices = useCallback(async () => {
     const request = await myServicesByUser();
@@ -76,8 +119,9 @@ export default function Company() {
 
   async function handleCreatePlan(data: ICompanyPlansSchema) {
     try {
-      await createPlan(obj.organization_id, data);
+      await createPlan(organization?.uuid as string, data);
       plansRef.current?.handleClose();
+      getPlans();
     } catch (error) {
       console.error("Error creating plan:", error);
     }
@@ -115,7 +159,8 @@ export default function Company() {
   useEffect(() => {
     getPlans();
     getServices();
-  }, [getPlans, getServices]);
+    findEstablishmentByUuid();
+  }, [getPlans, getServices, findEstablishmentByUuid]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -128,48 +173,77 @@ export default function Company() {
             ...service_form.getValues(),
             duration: service_form.getValues().estimate,
           });
+          serviceRef.current?.handleClose();
+          getServices();
         }
       )}
       {constructModal(
         plansRef,
         "Adicionar Plano",
         DEFAULT_PLANS_FORM(plans_form),
-        () => handleCreatePlan(plans_form.getValues())
+        () => {
+          handleCreatePlan(plans_form.getValues());
+          plansRef.current?.handleClose();
+          getPlans();
+        }
       )}
       {constructModal(
         serviceEditRef,
         "Editar Serviço",
         DEFAULT_SERVICE_FORM(service_form),
         () =>
-          updateService({
-            ...service_form.getValues(),
+          mutateUpdateService(currentServiceId as string, {
             duration: service_form.getValues().estimate,
+            is_quantitative: service_form.getValues().is_quantitative,
+            name: service_form.getValues().name,
+            price: Number(service_form.getValues().price),
+            limit_for_day: 0,
           })
       )}
       {constructModal(
         plansEditRef,
         "Editar Plano",
         DEFAULT_PLANS_FORM(plans_form),
-        () => updatePlan(plans_form.getValues())
+        () =>
+          mutateUpdatePlan(currentPlanId as string, {
+            description: plans_form.getValues().description,
+            dueDate: plans_form.getValues().dueDate as Date,
+            name: plans_form.getValues().name,
+            price: parseFloat(plans_form.getValues().price),
+            recurrent: plans_form.getValues().recurrent,
+          })
       )}
       <section className="w-7xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-7xl">
         <h3 className="font-bold text-xl p-5">Minha Empresa</h3>
         <div className="mb-12 pl-4 flex flex-row max-sm:flex-col sm:flex-col md:flex-col lg:flex-row gap-4 w-full">
-          <div className="w-7xl max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
-            <Avatar className="w-24 h-24 rounded cursor-pointer">
-              <AvatarImage
-                src={obj?.image_path || "https://github.com/shadcn.png"}
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-start justify-start gap-5 mt-4">
-              <Input value={obj?.social_name || ""} disabled />
-              <Input value={formatCNPJ(obj?.cnpj) || ""} disabled />
-              <Input value={obj?.office || ""} disabled />
-              <Input value={formatPhoneNumber(obj?.phone) || ""} disabled />
-              <Input value={obj?.email || ""} disabled />
+          {organization ? (
+            <div className="w-7xl max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
+              <Avatar className="w-24 h-24 rounded cursor-pointer">
+                <AvatarImage
+                  src={
+                    organization?.image_path || "https://github.com/shadcn.png"
+                  }
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start justify-start gap-5 mt-4">
+                <Input value={organization?.social_name || ""} disabled />
+                <Input value={formatCNPJ(organization.cnpj) || ""} disabled />
+                <Input value={organization?.office || ""} disabled />
+                <Input
+                  value={formatPhoneNumber(organization?.phone) || ""}
+                  disabled
+                />
+                <Input value={organization?.email || ""} disabled />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="w-7xl max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
+              <p className="text-gray-500">
+                Carregando informações da empresa...
+              </p>
+            </div>
+          )}
           <div className="flex flex-col items-start justify-start gap-5 w-1/2">
             <div className="max-sm:row-span-3 border border-gray-400 rounded w-3xl max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl h-auto">
               <section className="w-3xl p-6 max-sm:w-sm sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl">
@@ -237,6 +311,7 @@ export default function Company() {
                                     {
                                       label: "Editar",
                                       onClick: () => {
+                                        setCurrentServiceId(item.id);
                                         service_form.reset({
                                           price: item.price,
                                           name: item.name,
@@ -336,10 +411,12 @@ export default function Company() {
                                       plans_form.reset({
                                         price: item.price.toString(),
                                         name: item.name,
-                                        dueDate: new Date(),
-                                        description: "Plano de alguma coisa",
+                                        recurrent: item.recurrent,
+                                        dueDate: new Date(item.dueDate),
+                                        description: item.description,
                                       });
                                       document.startViewTransition(() => {
+                                        setCurrentPlanId(item.uuid);
                                         plansEditRef.current?.handleOpen();
                                       });
                                     },

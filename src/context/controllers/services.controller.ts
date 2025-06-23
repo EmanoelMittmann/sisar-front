@@ -12,7 +12,7 @@ export interface ListServiceResponse {
   created_at: string;
 }
 
-interface UpdateServiceInput {
+export interface UpdateServiceInput {
   name: string;
   price: number;
   duration: string;

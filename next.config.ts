@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["cdn.pixabay.com"],
+    domains: ["cdn.pixabay.com", "encrypted - tbn0.gstatic.com"],
   },
   allowedDevOrigins: ["172.26.243.124", "*.local-origin.dev"],
   headers: async () => {
