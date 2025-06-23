@@ -1,6 +1,5 @@
 "use client";
 import axios from "axios";
-import { API_URL } from "../api";
 
 export interface ListServiceResponse {
   id: string;
@@ -19,6 +18,7 @@ export interface UpdateServiceInput {
   is_quantitative: boolean;
   limit_for_day: number;
 }
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function listAllServices(
   organizationId: string
