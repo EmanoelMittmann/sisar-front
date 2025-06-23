@@ -80,6 +80,7 @@ export async function getServiceById(id: string): Promise<ListServiceResponse> {
       `${API_URL}/services/${id}`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -115,6 +116,7 @@ export async function myServicesByUser(): Promise<ListServiceResponse[]> {
       {},
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"

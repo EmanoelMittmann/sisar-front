@@ -26,6 +26,7 @@ export async function listAllPlans(
       `${API_URL}/plans/${organizationId}`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -134,6 +135,7 @@ export async function listPlansByUser(): Promise<ListPlansResponse[]> {
   try {
     const response = await axios.get<ListPlansResponse[]>(`${API_URL}/plans`, {
       headers: {
+        "ngrok-skip-browser-warning": true,
         "Content-Type": "application/json",
         Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
       },

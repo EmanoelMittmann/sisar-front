@@ -46,6 +46,7 @@ export async function findAllSchedules(): Promise<IScheduleResponse[]> {
       `${API_URL}/schedules`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -96,6 +97,7 @@ export async function findScheduleByOrganization(): Promise<
       `${API_URL}/schedules/by-company`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -117,6 +119,7 @@ export async function findScheduleById(id: string): Promise<IScheduleResponse> {
       `${API_URL}/schedules/${id}`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -186,6 +189,7 @@ export async function detailsSchedule(
       `${API_URL}/schedules/${schedule_uuid}/details`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"

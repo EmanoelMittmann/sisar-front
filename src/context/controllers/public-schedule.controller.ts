@@ -43,6 +43,7 @@ export async function listPublicSchedules(): Promise<IScheduleResponse[]> {
       `${API_URL}/public/schedules/list`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"

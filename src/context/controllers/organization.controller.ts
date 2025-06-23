@@ -27,6 +27,7 @@ export async function listEstablishment(): Promise<
       `${API_URL}/organization/list-establishment`,
       {
         headers: {
+          "ngrok-skip-browser-warning": true,
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem(
             "access_token"
@@ -46,6 +47,7 @@ export async function getEstablishmentByUuid(): Promise<IFindUser> {
   try {
     const response = await axios.get<IFindUser>(`${API_URL}/organization/me`, {
       headers: {
+        "ngrok-skip-browser-warning": true,
         "Content-Type": "application/json",
         Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
       },
