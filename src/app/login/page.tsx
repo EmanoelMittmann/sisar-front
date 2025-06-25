@@ -73,7 +73,16 @@ export default function Login() {
           <Label htmlFor="remember">Lembrar</Label>
         </div>
         <h5 className="text-xs pl-1 font-bold">
-          Não tem conta ? <a href="/cadastre-se">Cadastre-se aqui</a>
+          Não tem conta ?{" "}
+          <a
+            onClick={() => {
+              document.startViewTransition(() => {
+                navigate.push("/cadastre-se");
+              });
+            }}
+          >
+            Cadastre-se aqui
+          </a>
         </h5>
         <Button
           className="w-full bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"

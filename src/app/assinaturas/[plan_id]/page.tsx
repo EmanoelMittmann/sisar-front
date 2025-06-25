@@ -37,18 +37,18 @@ export default function DetalhesDaAssinatura({
             Detalhes da Assinatura
           </h2>
           {plan ? (
-            <div className="bg-white shadow-xl rounded-lg p-6 w-full">
+            <div className="bg-white dark:bg-gray-900 shadow-xl rounded-lg p-6 w-full">
               <div className="border-b pb-4 mb-4">
-                <h3 className="text-2xl font-semibold text-gray-800">
+                <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
                   {plan.name}
                 </h3>
-                <p className="text-gray-600 mt-2">{plan.description}</p>
+                <p className="text-gray-600 dark:text-white mt-2">{plan.description}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-4">
-                    <span className="block text-sm font-medium text-gray-500">
+                    <span className="block text-sm font-medium text-gray-500 dark:text-white">
                       Preço
                     </span>
                     <span className="text-xl font-bold text-green-600">
@@ -60,7 +60,7 @@ export default function DetalhesDaAssinatura({
                   </div>
 
                   <div className="mb-4">
-                    <span className="block text-sm font-medium text-gray-500">
+                    <span className="block text-sm font-medium text-gray-500 dark:text-white">
                       Recorrência
                     </span>
                     <span className="text-xl font-medium">
@@ -75,19 +75,19 @@ export default function DetalhesDaAssinatura({
 
                 <div>
                   <div className="mb-4">
-                    <span className="block text-sm font-medium text-gray-500">
+                    <span className="block text-sm font-medium text-gray-500 dark:text-white">
                       ID do Plano
                     </span>
-                    <span className="text-gray-800 text-sm font-mono">
+                    <span className="text-gray-800 dark:text-white text-sm font-mono">
                       {plan.uuid}
                     </span>
                   </div>
 
                   <div>
-                    <span className="block text-sm font-medium text-gray-500">
+                    <span className="block text-sm font-medium text-gray-500 dark:text-white">
                       Data de Vencimento
                     </span>
-                    <span className="text-gray-800">
+                    <span className="text-gray-800 dark:text-white">
                       {new Date(plan.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                   </div>

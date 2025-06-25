@@ -33,9 +33,16 @@ export const AuthDalProvider = ({
           setUser(decodedUser.payload);
         } catch (error) {
           console.error("Failed to decode user from token:", error);
+          localStorage.clear();
+          document.startViewTransition(() => {
+            window.location.href = "/login";
+          });
           setUser(null);
         }
       } else {
+        document.startViewTransition(() => {
+          window.location.href = "/login";
+        });
         setUser(null);
       }
     };

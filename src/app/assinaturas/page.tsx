@@ -41,7 +41,10 @@ export default function Assinaturas() {
       },
       {
         label: "Detalhes",
-        onClick: () => navigate.push(`/assinaturas/${id}`),
+        onClick: () =>
+          document.startViewTransition(() =>
+            navigate.push(`/assinaturas/${id}`)
+          ),
       },
     ];
   }

@@ -57,7 +57,7 @@ export default function Home() {
       </section>
       <section className="flex flex-col items-center ">
         <h2 className="text-2xl font-semibold mb-6">Em sua cidade</h2>
-        <div className="grid grid-cols-2 max-sm:gap-x-4 sm:gap-x-4 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-2">
+        <div className="grid grid-cols-1 max-sm:gap-x-12 max-sm:grid-col-2 sm:grid-cols-2 sm:gap-x-4 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-2">
           {establistments.map((business) => (
             <div key={business.id} className="text-center cursor-pointer">
               <div className="relative w-52 h-52 hover:w-53 hover:h-53 transition-all duration-500 ease-in-out aspect-square mb-2 rounded-lg overflow-hidden">

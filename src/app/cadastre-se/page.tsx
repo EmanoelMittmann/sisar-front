@@ -52,10 +52,14 @@ export default function Register() {
       if (response.userId) {
         user_context.setUser(response.userId);
         if (data.is_company) {
-          navigate.push("/cadastre-se/empresa");
+          document.startViewTransition(() => {
+            navigate.push("/cadastre-se/empresa");
+          });
         } else {
           toast.success("Cadastro realizado com sucesso");
-          navigate.push("/login");
+          document.startViewTransition(() => {
+            navigate.push("/login");
+          });
         }
       }
     } catch (error) {

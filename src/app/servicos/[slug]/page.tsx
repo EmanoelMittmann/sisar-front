@@ -11,13 +11,14 @@ import {
   ListServiceResponse,
 } from "@/context/controllers/services.controller";
 import { useAuthCtx } from "@/context/dal/auth-dal";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useCallback, useEffect, useState } from "react";
 
 export default function Agendar(_: { params: Promise<{ slug: string }> }) {
   const { slug } = use(_.params);
   const [services, setServices] = useState<ListServiceResponse[]>([]);
   const [plans, setPlans] = useState<ListPlansResponse[]>([]);
+  const navigate = useRouter();
 
   const queryServiceByCompany = useCallback(async () => {
     if (slug !== null) {
@@ -77,11 +78,22 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
                   >
                     <TableCell>{iterator.name}</TableCell>
                     <TableCell>{iterator.duration}</TableCell>
-                    <TableCell>R$ {iterator.price.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Link href={`${slug}/agendar/${iterator.id}`}>
-                        <Button className="cursor-pointer">Agendar</Button>
-                      </Link>
+                      R$ {(iterator.price / 100).toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        className="cursor-pointer"
+                        onClick={() => {
+                          document.startViewTransition(() =>
+                            navigate.push(
+                              `/servicos/${slug}/agendar/${iterator.id}`
+                            )
+                          );
+                        }}
+                      >
+                        Agendar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -107,7 +119,9 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
                     <TableCell>
                       {mapper[iterator.recurrent as keyof typeof mapper]}
                     </TableCell>
-                    <TableCell>R$ {iterator.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      R$ {(iterator.price / 100).toFixed(2)}
+                    </TableCell>
                     <TableCell>
                       <Button
                         className="cursor-pointer"

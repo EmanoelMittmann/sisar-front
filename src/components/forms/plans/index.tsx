@@ -29,6 +29,7 @@ export function DEFAULT_PLANS_FORM(
       <div className="grid grid-cols-4 items-center gap-4">
         <Label>Preço</Label>
         <Input
+          type="number"
           placeholder="Preço do plano"
           className=" col-span-3"
           {...form.register("price")}

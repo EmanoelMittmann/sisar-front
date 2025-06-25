@@ -171,6 +171,7 @@ export default function Company() {
         () => {
           createService({
             ...service_form.getValues(),
+
             duration: service_form.getValues().estimate,
           });
           serviceRef.current?.handleClose();
@@ -293,7 +294,7 @@ export default function Company() {
                                     {item.name}
                                   </span>
                                   <span className="text-xs text-gray-500">
-                                    R$ {item.price.toFixed(2)}
+                                    R$ {(item.price / 100).toFixed(2)}
                                   </span>
                                 </div>
                               </TableCell>
@@ -390,7 +391,7 @@ export default function Company() {
                                   {item.name}
                                 </span>
                                 <span className="text-xs text-gray-500">
-                                  R$ {item.price.toFixed(2)}
+                                  R$ {(item.price / 100).toFixed(2)}
                                 </span>
                               </div>
                             </TableCell>

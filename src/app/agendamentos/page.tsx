@@ -14,6 +14,7 @@ interface Agendamento {
   service: {
     uuid: string;
     name: string;
+    price: number;
   };
   contractAt: Date;
   status: "PENDING" | "FINISH" | "CANCELED" | "NOT_PAY";
@@ -140,7 +141,7 @@ function ScheduleTable({
                   </span>
                 </div>
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell>R$ {(item.service.price / 100).toFixed(2)}</TableCell>
               <TableCell></TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-x-2">

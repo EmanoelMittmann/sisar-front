@@ -56,12 +56,19 @@ const LIST_MENU = [
 
 export function AppSidebar() {
   const { user } = useAuthCtx();
+  const navigate = useRouter();
   const listOptions = LIST_MENU.map((item) => {
     if (user?.role == item.type_user)
       return (
-        <SidebarMenuItem key={item.title}>
+        <SidebarMenuItem key={item.title} className="cursor-pointer">
           <SidebarMenuButton asChild>
-            <a href={item.path}>
+            <a
+              onClick={() => {
+                document.startViewTransition(() => {
+                  navigate.push(item.path);
+                });
+              }}
+            >
               {item.icon}
               <span>{item.title}</span>
             </a>
@@ -135,7 +142,12 @@ const CustomDropdown = () => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => navigate?.push("/login")}
+          onClick={() => {
+            localStorage.clear();
+            document.startViewTransition(() => {
+              navigate?.push("/login");
+            });
+          }}
           className="cursor-pointer"
         >
           <LogOut />
