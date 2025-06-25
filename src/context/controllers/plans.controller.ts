@@ -5,7 +5,7 @@ export interface ListPlansResponse {
   uuid: string;
   name: string;
   price: number;
-  recurrent: string;
+  quantityInstallments: number;
   description: string;
   dueDate: Date;
 }
@@ -13,9 +13,9 @@ export interface ListPlansResponse {
 export interface ICreatePlanInput {
   name: string;
   price: number;
-  recurrent: string;
   description: string;
   dueDate: Date;
+  quantityInstallments: number;
 }
 
 export async function listAllPlans(

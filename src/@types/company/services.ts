@@ -7,8 +7,8 @@ export interface ICompanyServiceSchema {
 
 export interface ICompanyPlansSchema {
   name: string;
-  price: string;
-  recurrent: string;
+  price: number;
+  quantityInstallments: number;
   dueDate: Date | undefined;
   description: string;
 }

@@ -15,6 +15,7 @@ function Calendar({
 }: React.ComponentProps<typeof DayPicker>) {
   return (
     <DayPicker
+      lang="pt-BR"
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{

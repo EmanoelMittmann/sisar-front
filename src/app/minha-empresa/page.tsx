@@ -15,12 +15,15 @@ import { useGenericModal } from "@/hooks/useGenericModal";
 import { DEFAULT_PLANS_FORM } from "@/components/forms/plans";
 import { DEFAULT_SERVICE_FORM } from "@/components/forms/services";
 import {
+  deletePlan,
   ICreatePlanInput,
   listPlansByUser,
   ListPlansResponse,
   updatePlan,
 } from "@/context/controllers/plans.controller";
 import {
+  createService,
+  deleteService,
   ListServiceResponse,
   myServicesByUser,
   updateService,
@@ -62,15 +65,32 @@ export default function Company() {
   const plans_form = useForm<ICompanyPlansSchema>({
     defaultValues: {
       name: "",
-      price: "",
+      price: 0,
       dueDate: undefined,
       description: "",
-      recurrent: "",
+      quantityInstallments: 0,
     },
   });
 
   const { mutateAsync: createPlan } = useMutate("createPlan");
-  const { mutateAsync: createService } = useMutate("createService");
+  // const { mutateAsync: createService } = useMutate("createService");
+
+  async function mutateCreateService(data: ICompanyServiceSchema) {
+    try {
+      await createService({
+        duration: data.estimate,
+        is_quantitative: data.is_quantitative,
+        name: data.name,
+        price: data.price,
+        limit_for_day: 0,
+      });
+      await getServices();
+      serviceRef.current?.handleClose();
+      toast.success("Serviço criado com sucesso!");
+    } catch (error) {
+      console.error("Error creating service:", error);
+    }
+  }
 
   async function mutateUpdatePlan(id: string, input: ICreatePlanInput) {
     if (!id) {
@@ -120,10 +140,28 @@ export default function Company() {
   async function handleCreatePlan(data: ICompanyPlansSchema) {
     try {
       await createPlan(organization?.uuid as string, data);
+      await getPlans();
       plansRef.current?.handleClose();
-      getPlans();
     } catch (error) {
       console.error("Error creating plan:", error);
+    }
+  }
+
+  async function handleDeleteService(id: string) {
+    try {
+      await deleteService(id);
+      await getServices();
+    } catch (error) {
+      console.error("Error deleting service:", error);
+    }
+  }
+
+  async function handleDeletePlan(id: string) {
+    try {
+      await deletePlan(id);
+      await getPlans();
+    } catch (error) {
+      console.error("Error deleting plan:", error);
     }
   }
 
@@ -169,11 +207,7 @@ export default function Company() {
         "Adicionar Serviço",
         DEFAULT_SERVICE_FORM(service_form),
         () => {
-          createService({
-            ...service_form.getValues(),
-
-            duration: service_form.getValues().estimate,
-          });
+          mutateCreateService(service_form.getValues());
           serviceRef.current?.handleClose();
           getServices();
         }
@@ -183,7 +217,15 @@ export default function Company() {
         "Adicionar Plano",
         DEFAULT_PLANS_FORM(plans_form),
         () => {
-          handleCreatePlan(plans_form.getValues());
+          handleCreatePlan({
+            description: plans_form.getValues().description,
+            dueDate: plans_form.getValues().dueDate as Date,
+            name: plans_form.getValues().name,
+            price: Number(plans_form.getValues().price),
+            quantityInstallments: Number(
+              plans_form.getValues().quantityInstallments
+            ),
+          });
           plansRef.current?.handleClose();
           getPlans();
         }
@@ -210,9 +252,25 @@ export default function Company() {
             description: plans_form.getValues().description,
             dueDate: plans_form.getValues().dueDate as Date,
             name: plans_form.getValues().name,
-            price: parseFloat(plans_form.getValues().price),
-            recurrent: plans_form.getValues().recurrent,
+            price: Number(plans_form.getValues().price),
+            quantityInstallments: Number(
+              plans_form.getValues().quantityInstallments
+            ),
           })
+      )}
+      {constructAlert(
+        alert1Ref,
+        "Excluir Serviço",
+        currentServiceId || "",
+        "Deseja realmente excluir esse serviço? essa ação não pode ser revertida",
+        () => handleDeleteService(currentServiceId as string)
+      )}
+      {constructAlert(
+        alert2Ref,
+        "Excluir Plano",
+        currentPlanId || "",
+        "Deseja realmente excluir esse plano? essa ação não pode ser revertida",
+        () => handleDeletePlan(currentPlanId as string)
       )}
       <section className="w-7xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-7xl">
         <h3 className="font-bold text-xl p-5">Minha Empresa</h3>
@@ -281,13 +339,6 @@ export default function Company() {
                               key={index}
                               className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
                             >
-                              {constructAlert(
-                                alert1Ref,
-                                "Excluir Serviço",
-                                item.id,
-                                "Deseja realmente excluir esse serviço? essa ação não pode ser revertida",
-                                () => alert(`Excluido ${item.id}`)
-                              )}
                               <TableCell>
                                 <div className="flex flex-col items-start">
                                   <span className="text-sm text-black dark:text-white font-bold">
@@ -314,7 +365,7 @@ export default function Company() {
                                       onClick: () => {
                                         setCurrentServiceId(item.id);
                                         service_form.reset({
-                                          price: item.price,
+                                          price: item.price / 100,
                                           name: item.name,
                                           estimate: item.duration.toString(),
                                         });
@@ -325,10 +376,12 @@ export default function Company() {
                                     },
                                     {
                                       label: "Excluir",
-                                      onClick: () =>
+                                      onClick: () => {
+                                        setCurrentServiceId(item.id);
                                         document.startViewTransition(() =>
                                           alert1Ref.current?.handleOpen()
-                                        ),
+                                        );
+                                      },
                                     },
                                   ]}
                                 />
@@ -355,7 +408,7 @@ export default function Company() {
                     onClick={() =>
                       document.startViewTransition(() => {
                         plans_form.resetField("name", { defaultValue: "" });
-                        plans_form.resetField("price", { defaultValue: "" });
+                        plans_form.resetField("price", { defaultValue: 0 });
                         plans_form.resetField("dueDate", {
                           defaultValue: undefined,
                         });
@@ -378,13 +431,6 @@ export default function Company() {
                             key={index}
                             className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded-sm flex justify-between items-center p-2"
                           >
-                            {constructAlert(
-                              alert2Ref,
-                              "Excluir Plano",
-                              item.uuid,
-                              "Deseja realmente excluir esse plano? essa ação não pode ser revertida",
-                              () => alert(`Excluido ${item.uuid}`)
-                            )}
                             <TableCell>
                               <div className="flex flex-col items-start">
                                 <span className="text-sm text-black dark:text-white font-bold">
@@ -410,9 +456,10 @@ export default function Company() {
                                     label: "Editar",
                                     onClick: () => {
                                       plans_form.reset({
-                                        price: item.price.toString(),
+                                        price: item.price / 100,
                                         name: item.name,
-                                        recurrent: item.recurrent,
+                                        quantityInstallments:
+                                          item.quantityInstallments,
                                         dueDate: new Date(item.dueDate),
                                         description: item.description,
                                       });
@@ -424,10 +471,12 @@ export default function Company() {
                                   },
                                   {
                                     label: "Excluir",
-                                    onClick: () =>
+                                    onClick: () => {
+                                      setCurrentPlanId(item.uuid);
                                       document.startViewTransition(() =>
                                         alert2Ref.current?.handleOpen()
-                                      ),
+                                      );
+                                    },
                                   },
                                 ]}
                               />

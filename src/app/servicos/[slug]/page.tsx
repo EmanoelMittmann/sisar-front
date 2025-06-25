@@ -49,11 +49,11 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
     queryPlansByCompany();
   }, [queryServiceByCompany, queryPlansByCompany]);
 
-  const mapper = {
-    MONTHLY: "Mensal",
-    WEEKLY: "Semanal",
-    YEARLY: "Anual",
-  };
+  // const mapper = {
+  //   MONTHLY: "Mensal",
+  //   WEEKLY: "Semanal",
+  //   YEARLY: "Anual",
+  // };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -117,7 +117,11 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
                   >
                     <TableCell>{iterator.name}</TableCell>
                     <TableCell>
-                      {mapper[iterator.recurrent as keyof typeof mapper]}
+                      {iterator.quantityInstallments == 6
+                        ? "Mensal"
+                        : iterator.quantityInstallments == 12
+                        ? "Anual"
+                        : "Indefinido"}
                     </TableCell>
                     <TableCell>
                       R$ {(iterator.price / 100).toFixed(2)}
