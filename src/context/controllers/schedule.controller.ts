@@ -27,7 +27,7 @@ interface DetailsScheduleProps {
   status: string;
   service: {
     name: string;
-    price: string;
+    price: number;
     duration: string;
   };
   user: {
@@ -136,14 +136,22 @@ export async function findScheduleById(id: string): Promise<IScheduleResponse> {
 
 export async function createSchedule(
   input: ICreateScheduleInput
-): Promise<void> {
+): Promise<{ link: string }> {
   try {
-    await axios.post<void>(`${API_URL}/schedules/create`, input, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
-      },
-    });
+    const response = await axios.post<{ link: string }>(
+      `${API_URL}/schedules/create`,
+      input,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
   } catch (error) {
     console.error(error);
     return Promise.reject("Error creating schedule");
@@ -225,31 +233,5 @@ export async function alterStatus(
   } catch (error) {
     console.error(error);
     return Promise.reject("Error updating schedule status");
-  }
-}
-
-export async function assocPlanToUser(
-  planId: string,
-  userId: string
-): Promise<void> {
-  try {
-    await axios.post<void>(
-      `${API_URL}/schedules/assoc-plan-to-user`,
-      {
-        plan_id: planId,
-        user_id: userId,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem(
-            "access_token"
-          )}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error(error);
-    return Promise.reject("Error associating plan to user");
   }
 }

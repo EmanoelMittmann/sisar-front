@@ -23,12 +23,6 @@ export default function DetalhesDaAssinatura({
     getPlan();
   }, [getPlan]);
 
-  const MAPPER_RECURRENCIA = {
-    WEEKLY: "Semanal",
-    MONTHLY: "Mensal",
-    YEARLY: "Anual",
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col items-center gap-8">
@@ -42,7 +36,9 @@ export default function DetalhesDaAssinatura({
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
                   {plan.name}
                 </h3>
-                <p className="text-gray-600 dark:text-white mt-2">{plan.description}</p>
+                <p className="text-gray-600 dark:text-white mt-2">
+                  {plan.description}
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,11 +60,11 @@ export default function DetalhesDaAssinatura({
                       Recorrência
                     </span>
                     <span className="text-xl font-medium">
-                      {
-                        MAPPER_RECURRENCIA[
-                          plan.recurrent as keyof typeof MAPPER_RECURRENCIA
-                        ]
-                      }
+                      {plan.quantityInstallments == 6
+                        ? "Mensal"
+                        : plan.quantityInstallments == 12
+                        ? "Anual"
+                        : "Mensal"}
                     </span>
                   </div>
                 </div>

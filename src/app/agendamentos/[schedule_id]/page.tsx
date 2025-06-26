@@ -9,7 +9,7 @@ interface DetailsScheduleProps {
   status: string;
   service: {
     name: string;
-    price: string;
+    price: number;
     duration: string;
   };
   user: {
@@ -75,7 +75,9 @@ export default function DetalhesDeAgendamento({
                     </p>
                     <p className="flex justify-between">
                       <span className="font-medium">Preço:</span>{" "}
-                      <span>R$ {Number(schedule.service.price).toFixed(2)}</span>
+                      <span>
+                        R$ {Number(schedule.service.price / 100).toFixed(2)}
+                      </span>
                     </p>
                     <p className="flex justify-between">
                       <span className="font-medium">Duração:</span>{" "}

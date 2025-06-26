@@ -94,13 +94,14 @@ export default function Agendar(_: {
     const date = data.interval.split("*")[0];
     const transformedDate = new Date(date);
     try {
-      await createSchedule({
+      const { link } = await createSchedule({
         contract_date: transformedDate,
         service_id: service_id,
         remember_user: true,
       });
 
       modalRef.current?.handleClose();
+      window.open(link, "_blank");
       navigate.push("/sucesso-agendamento");
     } catch (error) {
       console.error("Error submitting form:", error);

@@ -12,7 +12,7 @@ interface Assinatura {
   name: string;
   price: number;
   status: boolean;
-  recurrent: "WEEKLY" | "MONTHLY" | "YEARLY";
+  quantityInstallments: number;
   description: string;
   dueDate: Date;
 }
@@ -20,11 +20,11 @@ interface Assinatura {
 export default function Assinaturas() {
   const [plans, setPlans] = useState<Assinatura[]>([]);
 
-  const MAPPER_RECURRENCIA = {
-    WEEKLY: "Semanal",
-    MONTHLY: "Mensal",
-    YEARLY: "Anual",
-  };
+  // const MAPPER_RECURRENCIA = {
+  //   WEEKLY: "Semanal",
+  //   MONTHLY: "Mensal",
+  //   YEARLY: "Anual",
+  // };
 
   const navigate = useRouter();
 
@@ -78,7 +78,11 @@ export default function Assinaturas() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {MAPPER_RECURRENCIA[item.recurrent]}
+                        {item.quantityInstallments == 6
+                          ? "Mensal"
+                          : item.quantityInstallments == 12
+                          ? "Anual"
+                          : "Indefinido"}
                       </TableCell>
                       <TableCell>
                         {new Date(item.dueDate).toLocaleDateString("pt-BR")}

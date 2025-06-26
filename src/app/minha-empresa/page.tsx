@@ -73,7 +73,6 @@ export default function Company() {
   });
 
   const { mutateAsync: createPlan } = useMutate("createPlan");
-  // const { mutateAsync: createService } = useMutate("createService");
 
   async function mutateCreateService(data: ICompanyServiceSchema) {
     try {
@@ -288,7 +287,18 @@ export default function Company() {
               <div className="flex flex-col items-start justify-start gap-5 mt-4">
                 <Input value={organization?.social_name || ""} disabled />
                 <Input value={formatCNPJ(organization.cnpj) || ""} disabled />
-                <Input value={organization?.office || ""} disabled />
+                <Input
+                  value={
+                    organization?.office == "beauty"
+                      ? "Beleza e bem-estar"
+                      : organization.office == "cleaning"
+                      ? "Limpeza"
+                      : organization.office == "domestic"
+                      ? "Domésticos"
+                      : "Outros"
+                  }
+                  disabled
+                />
                 <Input
                   value={formatPhoneNumber(organization?.phone) || ""}
                   disabled

@@ -2,10 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
+  assocPlanToUser,
   listAllPlans,
   ListPlansResponse,
 } from "@/context/controllers/plans.controller";
-import { assocPlanToUser } from "@/context/controllers/schedule.controller";
 import {
   listAllServices,
   ListServiceResponse,
@@ -36,7 +36,9 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
 
   async function assocPlan(planId: string, userId: string) {
     try {
-      await assocPlanToUser(planId, userId);
+      const data = await assocPlanToUser(planId, userId);
+      console.log(data);
+      return window.open(data.link, "_blank");
     } catch (error) {
       console.error(error);
     }
@@ -48,12 +50,6 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
     queryServiceByCompany();
     queryPlansByCompany();
   }, [queryServiceByCompany, queryPlansByCompany]);
-
-  // const mapper = {
-  //   MONTHLY: "Mensal",
-  //   WEEKLY: "Semanal",
-  //   YEARLY: "Anual",
-  // };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -121,7 +117,7 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
                         ? "Mensal"
                         : iterator.quantityInstallments == 12
                         ? "Anual"
-                        : "Indefinido"}
+                        : "Mensal"}
                     </TableCell>
                     <TableCell>
                       R$ {(iterator.price / 100).toFixed(2)}

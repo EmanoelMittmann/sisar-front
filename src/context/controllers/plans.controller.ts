@@ -146,3 +146,31 @@ export async function listPlansByUser(): Promise<ListPlansResponse[]> {
     return Promise.reject("Error getting list plans by user");
   }
 }
+
+export async function assocPlanToUser(
+  planId: string,
+  userId: string
+): Promise<{ link: string }> {
+  try {
+    const response = await axios.post<{ link: string }>(
+      `${API_URL}/plans/associate`,
+      {
+        planId: planId,
+        userId: userId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error associating plan to user");
+  }
+}

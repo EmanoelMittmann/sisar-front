@@ -68,13 +68,14 @@ export default function Login() {
             required: "Campo obrigatório",
           })}
         />
-        <div className="flex items-end space-x-2">
+        {/* <div className="flex items-end space-x-2">
           <Checkbox id="remember" />
           <Label htmlFor="remember">Lembrar</Label>
-        </div>
+        </div> */}
         <h5 className="text-xs pl-1 font-bold">
           Não tem conta ?{" "}
           <a
+            className="cursor-pointer"
             onClick={() => {
               document.startViewTransition(() => {
                 navigate.push("/cadastre-se");

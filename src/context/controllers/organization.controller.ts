@@ -43,6 +43,27 @@ export async function listEstablishment(): Promise<
   }
 }
 
+export async function getBalanceEstablishment(): Promise<number> {
+  try {
+    const response = await axios.get<number>(
+      `${API_URL}/organization/balance`,
+      {
+        headers: {
+          "ngrok-skip-browser-warning": true,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error getting balance for establishment");
+  }
+}
+
 export async function getEstablishmentByUuid(): Promise<IFindUser> {
   try {
     const response = await axios.get<IFindUser>(`${API_URL}/organization/me`, {

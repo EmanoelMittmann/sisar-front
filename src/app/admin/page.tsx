@@ -38,6 +38,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { getBalanceEstablishment } from "@/context/controllers/organization.controller";
 
 type StatusType = "PENDING" | "FINISH" | "CANCELED" | "NOT_PAY";
 interface Agendamento {
@@ -48,6 +49,10 @@ interface Agendamento {
   };
   service: {
     uuid: string;
+    name: string;
+    price: number;
+  };
+  user: {
     name: string;
   };
   contractAt: Date;
@@ -87,15 +92,25 @@ export default function AdminInicio() {
   const [schedules, setSchedules] = useState<Agendamento[]>([]);
   const [search, setSearch] = useState<string>("");
   const [status, setStatus] = useState<StatusType>("PENDING");
+  const [balance, setBalance] = useState<number>(0);
   const [currentScheduleId, setCurrentScheduleId] = useState<string | null>(
     null
   );
+
+  const fetchBalance = useCallback(async () => {
+    try {
+      const _balance = await getBalanceEstablishment();
+      setBalance(_balance);
+    } catch (error) {
+      console.error("Erro ao buscar saldo:", error);
+    }
+  }, []);
 
   const getScheduleByCompany = useCallback(async () => {
     try {
       const data = await findScheduleByOrganization();
       const publics = await listPublicSchedules();
-
+      console.log(data, publics);
       setSchedules([data, publics].flat() as Agendamento[]);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);
@@ -104,7 +119,8 @@ export default function AdminInicio() {
 
   useEffect(() => {
     getScheduleByCompany();
-  }, [getScheduleByCompany]);
+    fetchBalance();
+  }, [getScheduleByCompany, fetchBalance]);
 
   const filteredSchedules = useMemo(() => {
     if (!search) return schedules;
@@ -139,10 +155,10 @@ export default function AdminInicio() {
         <h1 className="text-2xl font-bold whitespace-nowrap mb-4">
           Bem-vindo {user?.username}
         </h1>
-        {/* <span className="text-lg whitespace-nowrap text-black flex flex-row items-center gap-5">
-          <h6 className="dark:text-white text-black">Entradas do Mês:</h6>
-          <h6 className="text-green-500">R$ 1000.00</h6>
-        </span> */}
+        <span className="text-lg whitespace-nowrap text-black flex flex-row items-center gap-3">
+          <h6 className="dark:text-white text-black">Entradas:</h6>
+          <h6 className="text-green-500">R$ {balance.toFixed(2)}</h6>
+        </span>
       </section>
       <section>
         <h4 className="text-xl font-semibold">Agendamentos Recentes</h4>
@@ -264,7 +280,7 @@ function ScheduleTable({
                   </span>
                 </div>
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell>R$ {(item.service.price / 100).toFixed(2)}</TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-x-2">
                   {transformDate(item.contractAt.toString())}{" "}
