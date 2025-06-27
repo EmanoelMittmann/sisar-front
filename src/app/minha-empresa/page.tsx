@@ -33,8 +33,10 @@ import { useMutate } from "@/hooks/use-mutate";
 import {
   getEstablishmentByUuid,
   IFindUser,
+  upsertImage,
 } from "@/context/controllers/organization.controller";
 import { toast } from "sonner";
+import { ModalDropzone } from "@/components/custom_components/modal-dropzone";
 
 export default function Company() {
   const serviceRef = React.useRef<IRefActions>(null);
@@ -52,6 +54,7 @@ export default function Company() {
   const [organization, setOrganization] = useState<IFindUser | null>(null);
   const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
   const [currentServiceId, setCurrentServiceId] = useState<string | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
 
   const service_form = useForm<ICompanyServiceSchema>({
     defaultValues: {
@@ -193,6 +196,52 @@ export default function Company() {
     }
   }
 
+  async function handleFile(input: File) {
+    if (!input) return;
+
+    const fileUrl = URL.createObjectURL(input);
+    const thumbnail = await resizeImage(fileUrl, 300, 300);
+
+    console.log(input);
+
+    try {
+      await upsertImage(thumbnail);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Erro ao enviar imagem. Tente novamente.");
+    }
+
+    setOpen(false);
+    toast.success("Imagem atualizada com sucesso!");
+    findEstablishmentByUuid();
+  }
+
+  function resizeImage(
+    base64: string,
+    width: number,
+    height: number
+  ): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new Image();
+
+      img.src = base64;
+
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        const resizedBase64 = canvas.toDataURL("image/jpeg");
+
+        resolve(resizedBase64);
+      };
+    });
+  }
+
   useEffect(() => {
     getPlans();
     getServices();
@@ -201,6 +250,7 @@ export default function Company() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ModalDropzone {...{ open, setOpen, handleFile }} />
       {constructModal(
         serviceRef,
         "Adicionar Serviço",
@@ -276,8 +326,12 @@ export default function Company() {
         <div className="mb-12 pl-4 flex flex-row max-sm:flex-col sm:flex-col md:flex-col lg:flex-row gap-4 w-full">
           {organization ? (
             <div className="w-7xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
-              <Avatar className="w-24 h-24 rounded cursor-pointer">
+              <Avatar
+                className="w-24 h-24 rounded cursor-pointer"
+                onClick={() => setOpen(true)}
+              >
                 <AvatarImage
+                  className="cursor-pointer"
                   src={
                     organization?.image_path || "https://github.com/shadcn.png"
                   }

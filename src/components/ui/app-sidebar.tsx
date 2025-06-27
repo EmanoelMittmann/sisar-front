@@ -145,7 +145,7 @@ const CustomDropdown = () => {
           onClick={() => {
             localStorage.clear();
             document.startViewTransition(() => {
-              navigate?.push("/login");
+              window.location.href = "/login";
             });
           }}
           className="cursor-pointer"

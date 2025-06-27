@@ -1,12 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 export default function Home() {
-  const navigate = useRouter();
   const redirectToLogin = () => {
     document.startViewTransition(() => {
-      navigate.push("/login");
+      window.location.href = "/login";
     });
   };
 

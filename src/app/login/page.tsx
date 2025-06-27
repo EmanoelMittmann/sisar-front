@@ -76,7 +76,7 @@ export default function Login() {
             className="cursor-pointer"
             onClick={() => {
               document.startViewTransition(() => {
-                navigate.push("/cadastre-se");
+                window.location.href = "/cadastre-se";
               });
             }}
           >

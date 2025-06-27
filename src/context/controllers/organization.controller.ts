@@ -64,6 +64,21 @@ export async function getBalanceEstablishment(): Promise<number> {
   }
 }
 
+export async function upsertImage(thumbnail: string): Promise<void> {
+  try {
+    await axios.put(`${API_URL}/organization/upsert-image`, thumbnail, {
+      headers: {
+        "ngrok-skip-browser-warning": true,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error ao atualizar imagem do estabelecimento");
+  }
+}
+
 export async function getEstablishmentByUuid(): Promise<IFindUser> {
   try {
     const response = await axios.get<IFindUser>(`${API_URL}/organization/me`, {
