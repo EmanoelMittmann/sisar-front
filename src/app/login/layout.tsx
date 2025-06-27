@@ -86,7 +86,7 @@ const ParticleExplosion = () => {
 
     const material = new THREE.PointsMaterial({
       color: colorChange(mode),
-      size: 0.002,
+      size: 0.004,
       transparent: false,
       opacity: 1,
       shadowSide: THREE.BackSide,

@@ -55,7 +55,7 @@ const ParticleExplosion = () => {
     mountRef?.current?.appendChild(renderer.domElement);
 
     // Partículas
-    const particleCount = 12500 ;
+    const particleCount = 15500 ;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
@@ -83,7 +83,7 @@ const ParticleExplosion = () => {
 
     const material = new THREE.PointsMaterial({
       color: colorChange(mode),
-      size: 0.001,
+      size: 0.004,
       transparent: false,
       opacity: 1,
     });

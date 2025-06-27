@@ -1,5 +1,4 @@
 "use client";
-
 export default function Home() {
   const redirectToLogin = () => {
     document.startViewTransition(() => {

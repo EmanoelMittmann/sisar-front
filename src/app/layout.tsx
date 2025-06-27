@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeWrapper } from "@/theme";
-import { ListenerErrorClientProvider } from "@/context/listeners/listener-error-client";
-import { Toaster } from "@/components/ui/toaster";
+import { ClientWrapper } from "@/context/wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "sisar",
   description: "A application for managing your schedules and appointments",
+  manifest: "/manifest.json",
   icons: {
     icon: "/scheduler.svg",
   },
@@ -29,14 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="bottom-left" />
-        <ListenerErrorClientProvider>
-          <ThemeWrapper>{children}</ThemeWrapper>
-        </ListenerErrorClientProvider>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );
