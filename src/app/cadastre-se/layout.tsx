@@ -1,5 +1,8 @@
 "use client";
+import { ThemeButton } from "@/theme/theme-button";
+import { ArrowLeft } from "lucide-react";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 import { ReactNode, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -11,16 +14,22 @@ export default function AuthenticationLayout({
   return (
     <div>
       <section className="@container flex flex-row @3xs:justify-center @3xs:items-center">
-        <div className="relative w-full h-screen @max-[1800px]:hidden">
+        <div className="relative w-full h-screen">
           <ParticleExplosion />
         </div>
         {/* <div className="bg-gradient-to-b from-[#049EA460] to-[#8FBC8F15] w-4xl h-screen @max-[1800px]:w-full flex items-center justify-center shadow-cyan-100"> */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#049EA460] to-[#8FBC8F15] flex items-center justify-center shadow-cyan-100">
           <div className="flex flex-col justify-center items-center gap-4">
-            <h3 className="text-4xl text-[#00000070] dark:text-white text-shadow-3xs">
-              sisar
-            </h3>
+            <div className="flex flex-row justify-between items-center gap-2 mb-1 w-full">
+              <Link href={"/"} className="flex items-center">
+                <ArrowLeft />
+              </Link>
+              <h3 className="text-4xl text-[#00000070] dark:text-white text-shadow-3xs pr-46">
+                sisar
+              </h3>
+            </div>
             {children}
+            <ThemeButton />
           </div>
         </div>
       </section>
@@ -55,7 +64,7 @@ const ParticleExplosion = () => {
     mountRef?.current?.appendChild(renderer.domElement);
 
     // Partículas
-    const particleCount = 15500 ;
+    const particleCount = 15500;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);

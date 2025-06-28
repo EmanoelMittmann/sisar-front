@@ -13,7 +13,8 @@ export default function AuthenticationLayout({
   return (
     <main>
       <section className="@container flex flex-row @3xs:justify-center @3xs:items-center">
-        <div className="relative w-full h-screen @max-[1800px]:hidden">
+        {/* <div className="relative w-full h-screen @max-[1800px]:hidden"> */}
+        <div className="relative w-full h-screen">
           <ParticleExplosion />
         </div>
         {/* <div className="bg-gradient-to-b from-[#049EA460] to-[#8FBC8F15] w-4xl h-screen @max-[1800px]:w-full flex items-center justify-center shadow-cyan-100"> */}
