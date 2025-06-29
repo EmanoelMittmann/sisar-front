@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { signin } from "@/context/controllers/auth.controller";
 import { toast } from "sonner";
 import { decodeJWT } from "@/helpers/jwt-decode";
+import { useEffect } from "react";
 
 export default function Login() {
   const navigate = useRouter();
@@ -47,12 +48,19 @@ export default function Login() {
     }
   }
 
-  document.addEventListener("keydown", (event) => {
-    if (event.which == 13) {
-      event.preventDefault();
-      handleSubmit(form.getValues());
-    }
-  });
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleSubmit(form.getValues());
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [form]);
 
   return (
     <div className="w-xl max-sm:w-sm sm:w-xl md:w-xl lg:w-xl h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">

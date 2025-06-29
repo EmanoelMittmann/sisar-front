@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { signup } from "@/context/controllers/auth.controller";
 import { user_context } from "@/context/user_context/user_context";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -37,6 +38,17 @@ export default function Register() {
   };
 
   async function handleSubmit(data: IRegisterProps) {
+    if (
+      !data.name ||
+      !data.email ||
+      !data.phone ||
+      !data.password ||
+      !data.password_confirmation ||
+      (data.is_company && !data.cpf)
+    ) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
     try {
       const response = await signup({
         confirm_password: data.password_confirmation,
@@ -67,6 +79,20 @@ export default function Register() {
       toast.error("Erro ao cadastrar usuário");
     }
   }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleSubmit(form.getValues());
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [form]);
 
   return (
     <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
