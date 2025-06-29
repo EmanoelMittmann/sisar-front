@@ -199,13 +199,26 @@ export default function Company() {
   async function handleFile(input: File) {
     if (!input) return;
 
-    const fileUrl = URL.createObjectURL(input);
-    const thumbnail = await resizeImage(fileUrl, 300, 300);
+    const thumbnail = await resizeImage(URL.createObjectURL(input), 300, 300);
 
-    console.log(input);
+    const matches = thumbnail.match(/^data:(.+);base64,(.+)$/);
+
+    if (!matches) {
+      throw new Error("Invalid base64 string");
+    }
+
+    const mimeType = matches[1];
+    const base64Content = matches[2];
+
+    const buffer = Buffer.from(base64Content, "base64");
+
+    const newFile = new File([buffer], input.name, { type: mimeType });
+
+    const form = new FormData();
+    form.append("file", newFile);
 
     try {
-      await upsertImage(thumbnail);
+      await upsertImage(form);
     } catch (error) {
       console.error("Error uploading image:", error);
       toast.error("Erro ao enviar imagem. Tente novamente.");

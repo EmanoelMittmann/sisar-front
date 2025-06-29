@@ -64,12 +64,12 @@ export async function getBalanceEstablishment(): Promise<number> {
   }
 }
 
-export async function upsertImage(thumbnail: string): Promise<void> {
+export async function upsertImage(data: FormData): Promise<void> {
   try {
-    await axios.put(`${API_URL}/organization/upsert-image`, thumbnail, {
+    await axios.put(`${API_URL}/organization/upsert-image`, data, {
       headers: {
         "ngrok-skip-browser-warning": true,
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
       },
     });
