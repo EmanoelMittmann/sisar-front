@@ -4,7 +4,7 @@ FROM node:20-bookworm AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm config set loglevel verbose
-RUN npm ci --no-audit --no-fund --progress=false --prefer-offline
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
