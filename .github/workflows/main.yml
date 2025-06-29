@@ -1,0 +1,50 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - stg
+
+env:
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  GCP_ARTIFACT_REGISTRY: southamerica-east1-docker.pkg.dev/skilful-asset-464201-m1/sisar/sisar
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Define image name
+        id: vars
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            echo "env=production" >> $GITHUB_OUTPUT
+          else
+            echo "env=staging" >> $GITHUB_OUTPUT
+          fi
+          echo "image_name=${GCP_ARTIFACT_REGISTRY}${GITHUB_OUTPUT_ENV}" >> $GITHUB_OUTPUT
+        shell: bash
+        
+      - name: Build Container
+        run: |
+          docker build \
+            --file Dockerfile \
+            --tag ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.env }} \
+            .
+        # run: docker build . --file Dockerfile --tag ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.env }}
+      - name: Authenticate with GCP Artifact Registry
+        run: |
+          echo "${GCP_SA_KEY}" | docker login -u _json_key --password-stdin https://${GCP_ARTIFACT_REGISTRY}
+
+      - name: Tag and push latest
+        run: |
+          docker pull ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.env }} || echo "Image not found"
+          docker tag ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.env }} ${{ steps.vars.outputs.image_name }}:latest
+          docker push ${{ steps.vars.outputs.image_name }}:latest
