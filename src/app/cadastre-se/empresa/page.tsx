@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { signupCompany } from "@/context/controllers/auth.controller";
 import { user_context } from "@/context/user_context/user_context";
-import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -23,7 +22,6 @@ const DEFAULT_SERVICES: IOptions = [
 ];
 
 export default function Company() {
-  const navigate = useRouter();
   const form = useForm<ICompanyRequirements>({
     defaultValues: {
       cnpj: "",
@@ -54,7 +52,9 @@ export default function Company() {
 
       if (response.message) {
         toast.success("Cadastro realizado com sucesso");
-        navigate.push("/login");
+        document.startViewTransition(() => {
+          window.location.href = "/login";
+        });
       }
     } catch (error) {
       console.error(error);

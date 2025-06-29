@@ -31,6 +31,7 @@ import {
 } from "@/context/controllers/services.controller";
 import { useMutate } from "@/hooks/use-mutate";
 import {
+  createSubaccount,
   getEstablishmentByUuid,
   IFindUser,
   upsertImage,
@@ -196,6 +197,19 @@ export default function Company() {
     }
   }
 
+  async function handleSubaccount() {
+    try {
+      if (!organization?.uuid) {
+        toast.error("Organização não encontrada.");
+        return;
+      }
+      await createSubaccount(organization.uuid);
+      await findEstablishmentByUuid();
+    } catch (error) {
+      console.error("Error creating subaccount:", error);
+    }
+  }
+
   async function handleFile(input: File) {
     if (!input) return;
 
@@ -338,7 +352,7 @@ export default function Company() {
         <h3 className="font-bold text-xl p-5">Minha Empresa</h3>
         <div className="mb-12 pl-4 flex flex-row max-sm:flex-col sm:flex-col md:flex-col lg:flex-row gap-4 w-full">
           {organization ? (
-            <div className="w-7xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-xl border border-gray-400 rounded p-4">
+            <div className="w-xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-2xl border border-gray-400 rounded p-4">
               <Avatar
                 className="w-24 h-24 rounded cursor-pointer"
                 onClick={() => setOpen(true)}
@@ -381,8 +395,8 @@ export default function Company() {
             </div>
           )}
           <div className="flex flex-col items-start justify-start gap-5 w-1/2">
-            <div className="max-sm:row-span-3 border border-gray-400 rounded w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl h-auto">
-              <section className="w-3xl p-6 max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl">
+            <div className="max-sm:row-span-3 border border-gray-400 rounded w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-2xl h-auto">
+              <section className="w-3xl p-6 max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-2xl">
                 <div className="flex items-center justify-between">
                   <h5 className="text-2xl font-semibold mb-6 text-center">
                     Serviços
@@ -474,8 +488,8 @@ export default function Company() {
                 </div>
               </section>
             </div>
-            <div className="max-sm:row-span-3 border border-gray-400 rounded w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl h-auto">
-              <section className="w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-xl p-6">
+            <div className="max-sm:row-span-3 border border-gray-400 rounded w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-2xl h-auto">
+              <section className="w-3xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-xl 2xl:w-2xl p-6">
                 <div className="flex items-center justify-between">
                   <h5 className="text-2xl font-semibold mb-6 text-start">
                     Planos
@@ -567,6 +581,36 @@ export default function Company() {
                   </Table>
                 </div>
               </section>
+            </div>
+          </div>
+        </div>
+        <div className="ml-12">
+          <div className="w-2xl max-sm:w-xs sm:w-xl md:w-xl lg:w-md xl:w-md 2xl:w-full border border-gray-400 rounded p-4">
+            <div className="flex items-center justify-between">
+              <p>Asaas Credenciais</p>
+              <Button onClick={() => handleSubaccount()}>Criar Subconta</Button>
+            </div>
+            <div className="p-4">
+              <p className="text-gray-500">
+                As credenciais do Asaas são usadas para gerenciar pagamentos e
+                assinaturas. Certifique-se de que estão corretas.
+              </p>
+              <div className="flex flex-col gap-2 mt-4">
+                <label htmlFor="api_key">Chave Api</label>
+                <Input
+                  id="api_key"
+                  placeholder="Chave de API"
+                  disabled
+                  value={organization?.api_key ?? ""}
+                />
+                <label htmlFor="wallet_id">ID da Carteira</label>
+                <Input
+                  id="wallet_id"
+                  placeholder="ID da Carteira"
+                  disabled
+                  value={organization?.wallet_id ?? ""}
+                />
+              </div>
             </div>
           </div>
         </div>

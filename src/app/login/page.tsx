@@ -47,6 +47,13 @@ export default function Login() {
     }
   }
 
+  document.addEventListener("keydown", (event) => {
+    if (event.which == 13) {
+      event.preventDefault();
+      handleSubmit(form.getValues());
+    }
+  });
+
   return (
     <div className="w-xl max-sm:w-sm sm:w-xl md:w-xl lg:w-xl h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>

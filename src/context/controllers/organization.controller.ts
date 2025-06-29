@@ -15,6 +15,8 @@ export interface IFindUser {
   phone: string;
   office: string;
   image_path: string | null;
+  api_key: string | null;
+  wallet_id: string | null;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -92,5 +94,26 @@ export async function getEstablishmentByUuid(): Promise<IFindUser> {
   } catch (error) {
     console.error(error);
     return Promise.reject("Error getting establishment by UUID");
+  }
+}
+
+export async function createSubaccount(uuid: string): Promise<void> {
+  try {
+    await axios.post(
+      `${API_URL}/organization/create-sub-account/${uuid}`,
+      {},
+      {
+        headers: {
+          "ngrok-skip-browser-warning": true,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "access_token"
+          )}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return Promise.reject("Error creating subaccount");
   }
 }

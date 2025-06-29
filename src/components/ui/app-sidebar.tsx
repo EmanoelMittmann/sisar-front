@@ -56,6 +56,7 @@ const LIST_MENU = [
 
 export function AppSidebar() {
   const { user } = useAuthCtx();
+  console.log(user);
   const navigate = useRouter();
   const listOptions = LIST_MENU.map((item) => {
     if (user?.role == item.type_user)

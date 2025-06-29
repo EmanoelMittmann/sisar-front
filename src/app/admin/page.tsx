@@ -110,7 +110,6 @@ export default function AdminInicio() {
     try {
       const data = await findScheduleByOrganization();
       const publics = await listPublicSchedules();
-      console.log(data, publics);
       setSchedules([data, publics].flat() as Agendamento[]);
     } catch (error) {
       console.error("Erro ao buscar agendamentos:", error);

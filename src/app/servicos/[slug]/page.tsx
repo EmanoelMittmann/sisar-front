@@ -37,7 +37,6 @@ export default function Agendar(_: { params: Promise<{ slug: string }> }) {
   async function assocPlan(planId: string, userId: string) {
     try {
       const data = await assocPlanToUser(planId, userId);
-      console.log(data);
       return window.open(data.link, "_blank");
     } catch (error) {
       console.error(error);
