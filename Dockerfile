@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm config set loglevel verbose
 RUN npm install --legacy-peer-deps
 COPY . .
+ENV NEXT_PUBLIC_API_URL=https://sisar-back-347173917793.southamerica-east1.run.app/api
 RUN npm run build
 
 
