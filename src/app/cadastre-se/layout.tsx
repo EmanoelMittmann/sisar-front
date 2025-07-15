@@ -13,7 +13,7 @@ export default function AuthenticationLayout({
 }) {
   const Animation = useMemo(() => {
     return ParticleExplosion;
-  }, [window]);
+  }, []);
   return (
     <div>
       <section className="@container flex flex-row @3xs:justify-center @3xs:items-center">
