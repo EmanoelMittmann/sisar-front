@@ -11,11 +11,14 @@ export default function AuthenticationLayout({
 }: {
   children: ReactNode;
 }) {
+  const Animation = useMemo(() => {
+    return ParticleExplosion;
+  }, [window]);
   return (
     <div>
       <section className="@container flex flex-row @3xs:justify-center @3xs:items-center">
         <div className="relative w-full h-screen">
-          <ParticleExplosion />
+          <Animation />
         </div>
         {/* <div className="bg-gradient-to-b from-[#049EA460] to-[#8FBC8F15] w-4xl h-screen @max-[1800px]:w-full flex items-center justify-center shadow-cyan-100"> */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#049EA460] to-[#8FBC8F15] flex items-center justify-center shadow-cyan-100">
@@ -24,7 +27,7 @@ export default function AuthenticationLayout({
               <Link href={"/"} className="flex items-center">
                 <ArrowLeft />
               </Link>
-              <h3 className="text-4xl text-[#00000070] dark:text-white text-shadow-3xs pr-46">
+              <h3 className="text-4xl text-[#00000070] dark:text-white text-shadow-3xs pr-38 sm:46 md:pr-52 lg:52 2xl:pr-62">
                 sisar
               </h3>
             </div>
@@ -63,8 +66,14 @@ const ParticleExplosion = () => {
     renderer.setClearColor(mode == "dark" ? 0x000000 : 0xffffff, 1); // Fundo transparente
     mountRef?.current?.appendChild(renderer.domElement);
 
-    // Partículas
-    const particleCount = 15500;
+    // Responsividade - ajuste de partículas baseado no tamanho da tela
+    const getParticleCount = () => {
+      if (window.innerWidth <= 480) return 5000; // Mobile
+      if (window.innerWidth <= 768) return 9000; // Tablet
+      return 15500; // Desktop
+    };
+
+    const particleCount = getParticleCount();
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
@@ -122,8 +131,10 @@ const ParticleExplosion = () => {
 
       particleSystem.geometry.attributes.position.needsUpdate = true;
 
-      camera.position.x = Math.sin(time) * 4.0;
-      camera.position.z = Math.cos(time) * 3;
+      // Ajustar a órbita da câmera baseada no tamanho da tela
+      const orbitRadius = window.innerWidth <= 768 ? 2.5 : 4.0;
+      camera.position.x = Math.sin(time) * orbitRadius;
+      camera.position.z = Math.cos(time) * (orbitRadius * 0.75);
       camera.lookAt(0, 0, 0);
       time += 0.001;
 
@@ -132,13 +143,25 @@ const ParticleExplosion = () => {
 
     animate();
 
+    // Handle resize
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+
     // Cleanup
     return () => {
       cancelAnimationFrame(animationId);
       renderer.dispose();
-      mountRef?.current?.removeChild(renderer.domElement);
+      window.removeEventListener("resize", handleResize);
+      if (mountRef.current?.contains(renderer.domElement)) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
     };
-  }, [mode, mountRef]);
+  }, [mode]);
 
-  return <div ref={mountRef} />;
+  return <div ref={mountRef} className="w-full h-full" />;
 };

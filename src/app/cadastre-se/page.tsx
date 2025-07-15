@@ -95,7 +95,7 @@ export default function Register() {
   }, [form]);
 
   return (
-    <div className="w-md h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
+    <div className="w-sm sm:w-sm md:w-md lg:w-lg xl:w-xl 2xl:w-xl h-1/3 bg-white dark:bg-black rounded-md flex flex-col items-start justify-start gap-8 p-8">
       <FormProvider {...form}>
         {Object.keys(form.getValues()).map((key, index) => {
           if (key === "is_client" || key === "is_company") {
@@ -123,7 +123,7 @@ export default function Register() {
           );
         })}
         <Button
-          className="w-sm bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
+          className="w-xs sm:w-xs md:w-sm lg:w-md xl:w-lg 2xl:w-lg bg-[#049EA4] cursor-pointer hover:bg-[#049EA480] dark:text-white"
           variant="default"
           onClick={() => handleSubmit(form.getValues())}
         >

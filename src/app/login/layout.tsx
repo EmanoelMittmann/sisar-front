@@ -10,6 +10,7 @@ export default function AuthenticationLayout({
 }: {
   children: ReactNode;
 }) {
+
   return (
     <main>
       <section className="@container flex flex-row @3xs:justify-center @3xs:items-center">
@@ -58,11 +59,17 @@ const ParticleExplosion = () => {
     renderer.setClearColor(mode == "dark" ? 0x000000 : 0xffffff, 1); // Fundo transparente
     mountRef?.current?.appendChild(renderer.domElement);
 
-    // Partículas
-    const particleCount = 12500;
+    // Responsividade - ajuste de partículas baseado no tamanho da tela
+    const getParticleCount = () => {
+      if (window.innerWidth <= 480) return 5000; // Mobile
+      if (window.innerWidth <= 768) return 9000; // Tablet
+      return 15500; // Desktop
+    };
+
+    const particleCount = getParticleCount();
     const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 4);
-    const velocities = new Float32Array(particleCount * 4);
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount; i++) {
       positions[i * 3] = 0;
@@ -90,7 +97,6 @@ const ParticleExplosion = () => {
       size: 0.004,
       transparent: false,
       opacity: 1,
-      shadowSide: THREE.BackSide,
     });
 
     const particleSystem = new THREE.Points(particles, material);
@@ -118,8 +124,10 @@ const ParticleExplosion = () => {
 
       particleSystem.geometry.attributes.position.needsUpdate = true;
 
-      camera.position.x = Math.sin(time) * 4.0;
-      camera.position.z = Math.cos(time) * 3;
+      // Ajustar a órbita da câmera baseada no tamanho da tela
+      const orbitRadius = window.innerWidth <= 768 ? 2.5 : 4.0;
+      camera.position.x = Math.sin(time) * orbitRadius;
+      camera.position.z = Math.cos(time) * (orbitRadius * 0.75);
       camera.lookAt(0, 0, 0);
       time += 0.001;
 
@@ -128,13 +136,25 @@ const ParticleExplosion = () => {
 
     animate();
 
+    // Handle resize
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+
     // Cleanup
     return () => {
       cancelAnimationFrame(animationId);
       renderer.dispose();
-      mountRef?.current?.removeChild(renderer.domElement);
+      window.removeEventListener("resize", handleResize);
+      if (mountRef.current?.contains(renderer.domElement)) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
     };
-  }, [mode, mountRef]);
+  }, [mode]);
 
-  return <div ref={mountRef} />;
+  return <div ref={mountRef} className="w-full h-full" />;
 };
