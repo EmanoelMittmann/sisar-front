@@ -37,7 +37,6 @@ export default function AgendamentoPublico({
     <div className="container mx-auto px-4 py-8">
       <div className="mb-12 flex flex-col items-center">
         <section className="w-4xl max-sm:w-sm sm:w-xl md:w-3xl lg:w-4xl flex flex-col items-center">
-          <h3 className="font-bold text-xl p-5">Barbearia Tal | Serviços</h3>
           <div className="w-2xl max-sm:w-sm sm:w-xl md:w-3xl h-auto border border-gray-300 rounded p-4 ">
             <h4 className="font-bold">Populares</h4>
             <Table>
